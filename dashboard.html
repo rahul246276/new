@@ -1,3099 +1,526 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Travelasha Admin</title>
-    <style>
-        /* Simple, clean styling for human readability */
-        * {
-            box-sizing: border-box;
-        }
-        
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0; 
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            color: #333;
-            line-height: 1.6;
-        }
-        
-        .sidebar { 
-            width: 250px; 
-            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%); 
-            height: 100vh; 
-            position: fixed; 
-            color: white;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-        }
-        
-        .sidebar .logo {
-            padding: 25px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .sidebar .logo h3 {
-            margin: 0;
-            font-size: 24px;
-            font-weight: 300;
-            letter-spacing: 1px;
-        }
-        
-        .sidebar a { 
-            color: rgba(255,255,255,0.8); 
-            padding: 15px 20px; 
-            display: block; 
-            text-decoration: none; 
-            border-left: 3px solid transparent;
-            transition: all 0.3s ease;
-            font-size: 14px;
-        }
-        
-        .sidebar a:hover { 
-            background: rgba(255,255,255,0.1); 
-            border-left-color: #3498db;
-            color: white;
-            transform: translateX(3px);
-        }
-        
-        .sidebar a.active {
-            background: rgba(255,255,255,0.15);
-            border-left-color: #3498db;
-            color: white;
-        }
-        
-        .main { 
-            margin-left: 250px; 
-            padding: 30px; 
-            min-height: 100vh;
-        }
-        
-        .card { 
-            background: white; 
-            padding: 25px; 
-            margin: 0 0 25px 0; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.05);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
-        }
-        
-        .hidden { display: none; }
-        
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            margin-top: 15px;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        
-        th, td { 
-            padding: 15px 12px; 
-            border-bottom: 1px solid #f0f0f0; 
-            text-align: left;
-            font-size: 14px;
-        }
-        
-        th { 
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); 
-            font-weight: 600;
-            color: #495057;
-            text-transform: uppercase;
-            font-size: 12px;
-            letter-spacing: 0.5px;
-        }
-        
-        tr:hover {
-            background: #f8f9fa;
-        }
-        
-        .btn { 
-            padding: 12px 24px; 
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); 
-            color: white; 
-            border: none; 
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3);
-        }
-        
-        .btn:hover { 
-            background: linear-gradient(135deg, #2980b9 0%, #21618c 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
-        }
-        
-        .btn:active {
-            transform: translateY(0);
-        }
-        
-        .btn-success {
-            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
-            box-shadow: 0 2px 5px rgba(39, 174, 96, 0.3);
-        }
-        
-        .btn-success:hover {
-            background: linear-gradient(135deg, #229954 0%, #1e8449 100%);
-            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
-        }
-        
-        .btn-danger {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-            box-shadow: 0 2px 5px rgba(231, 76, 60, 0.3);
-        }
-        
-        .btn-danger:hover {
-            background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
-            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
-        }
-        
-        input, select, textarea { 
-            width: 100%; 
-            padding: 12px 15px; 
-            margin: 8px 0; 
-            border: 2px solid #e9ecef; 
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            font-family: inherit;
-        }
-        
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-        }
-        
-        .stats { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px; 
-            margin-bottom: 30px; 
-        }
-        
-        .stat { 
-            background: white; 
-            padding: 25px; 
-            text-align: center; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .stat::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #3498db, #2ecc71, #f39c12, #e74c3c);
-        }
-        
-        .stat:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-        
-        .stat h3 { 
-            color: #2c3e50; 
-            margin: 0 0 8px 0;
-            font-size: 32px;
-            font-weight: 700;
-        }
-        
-        .stat p { 
-            color: #7f8c8d; 
-            margin: 0;
-            font-size: 14px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        h1 { 
-            color: #2c3e50; 
-            margin-bottom: 30px;
-            font-size: 32px;
-            font-weight: 300;
-            position: relative;
-            padding-bottom: 15px;
-        }
-        
-        h1::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 60px;
-            height: 3px;
-            background: linear-gradient(90deg, #3498db, #2ecc71);
-            border-radius: 2px;
-        }
-        
-        h2 { 
-            color: #2c3e50; 
-            margin-bottom: 20px;
-            font-size: 20px;
-            font-weight: 500;
-            position: relative;
-            padding-bottom: 10px;
-        }
-        
-        h2::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 40px;
-            height: 2px;
-            background: #3498db;
-            border-radius: 1px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #495057;
-            font-size: 14px;
-        }
-        
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
-        
-        .checkbox-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 12px;
-            margin-top: 10px;
-        }
-        
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            padding: 8px 12px;
-            background: #f8f9fa;
-            border-radius: 6px;
-            border: 1px solid #e9ecef;
-            transition: all 0.2s ease;
-        }
-        
-        .checkbox-item:hover {
-            background: #e9ecef;
-            border-color: #dee2e6;
-        }
-        
-        .checkbox-item input[type="checkbox"] {
-            width: auto;
-            margin-right: 8px;
-            margin-top: 0;
-        }
-        
-        .checkbox-item label {
-            margin: 0;
-            cursor: pointer;
-            font-size: 14px;
-            color: #495057;
-        }
-        
-        .badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .badge-success {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .badge-warning {
-            background: #fff3cd;
-            color: #856404;
-        }
-        
-        .badge-danger {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        
-        .badge-info {
-            background: #d1ecf1;
-            color: #0c5460;
-        }
-        
-        .empty-state {
-            text-align: center; 
-            padding: 60px 20px; 
-            color: #6c757d;
-            font-style: italic;
-        }
-        
-        .empty-state i {
-            font-size: 48px;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travelasha Admin Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
     <div class="sidebar">
         <div class="logo">
             <h3>Travelasha</h3>
         </div>
-        <a href="#" onclick="showPage('dashboard')">Dashboard</a>
-        <a href="#" onclick="showPage('users')">Users</a>
-        <a href="#" onclick="showPage('bookings')">Bookings</a>
-        <a href="#" onclick="showPage('packages')">Packages</a>
-        <a href="#" onclick="showPage('settings')">Settings</a>
+        <a href="#dashboard" class="active" onclick="showSection('dashboard', this)">Dashboard</a>
+        <a href="#packages" onclick="showSection('packages', this)">Packages</a>
+        <a href="#bookings" onclick="showSection('bookings', this)">Bookings</a>
+        <a href="#users" onclick="showSection('users', this)">Users</a>
+        <a href="#analytics" onclick="showSection('analytics', this)">Analytics</a>
+        <a href="#settings" onclick="showSection('settings', this)">Settings</a>
         <a href="#" onclick="logout()">Logout</a>
     </div>
 
     <div class="main">
-        <h1 id="title">Dashboard</h1>
-        
-        <div id="dashboard">
+        <div class="header">
+            <h1>Admin Dashboard</h1>
+            <div class="header-actions">
+                <div class="user-info">
+                    Welcome, Admin
+                </div>
+                <button class="btn btn-sm" onclick="refreshData()">Refresh</button>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="content-section">
+            <h2>Dashboard Overview</h2>
             <div class="stats">
                 <div class="stat">
-                    <h3 id="totalUsers">0</h3>
-                    <p>Total Customers</p>
+                    <h3 id="totalPackages">0</h3>
+                    <p>Total Packages</p>
                 </div>
                 <div class="stat">
                     <h3 id="totalBookings">0</h3>
-                    <p>Confirmed Bookings</p>
+                    <p>Total Bookings</p>
                 </div>
                 <div class="stat">
-                    <h3 id="totalPackages">10</h3>
-                    <p>Available Packages</p>
+                    <h3 id="totalUsers">0</h3>
+                    <p>Total Users</p>
                 </div>
                 <div class="stat">
-                    <h3 id="totalRevenue">₹0</h3>
-                    <p>Revenue</p>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2>Recent Bookings</h2>
-                <table id="recentBookingsTable">
-                    <tr><th>ID</th><th>Customer</th><th>Package</th><th>Amount</th><th>Status</th></tr>
-                    <!-- Bookings will be loaded here from localStorage -->
-                </table>
-                
-                <div id="noBookings" style="text-align: center; padding: 40px; color: #666;">
-                    No bookings yet. Confirm customer inquiries to create bookings.
-                </div>
-            </div>
-
-            <div class="card">
-                <h2>Recent Customers</h2>
-                <table id="recentCustomersTable">
-                    <tr><th>ID</th><th>Name</th><th>Package</th><th>Status</th><th>Received</th><th>Actions</th></tr>
-                    <!-- Customers will be loaded here from localStorage -->
-                </table>
-                
-                <div id="noCustomers" style="text-align: center; padding: 40px; color: #666;">
-                    No customers yet.
+                    <h3 id="revenue">₹0</h3>
+                    <p>Total Revenue</p>
                 </div>
             </div>
         </div>
 
-        <div id="users" class="hidden">
-            <div class="card">
-                <h2>Customer Management</h2>
-                
-                <!-- Customer Statistics Dashboard -->
-                <div style="margin-bottom: 25px;">
-                    <h3 style="margin-bottom: 15px; color: #333;">Customer Overview</h3>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                            <h4 style="margin: 0 0 5px 0; font-size: 14px; opacity: 0.9;">Total Customers</h4>
-                            <p style="margin: 0; font-size: 28px; font-weight: bold;" id="customerTotalCount">0</p>
-                        </div>
-                        <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                            <h4 style="margin: 0 0 5px 0; font-size: 14px; opacity: 0.9;">New Inquiries</h4>
-                            <p style="margin: 0; font-size: 28px; font-weight: bold;" id="newInquiryCount">0</p>
-                        </div>
-                        <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                            <h4 style="margin: 0 0 5px 0; font-size: 14px; opacity: 0.9;">Converted</h4>
-                            <p style="margin: 0; font-size: 28px; font-weight: bold;" id="convertedCount">0</p>
-                        </div>
-                        <div style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                            <h4 style="margin: 0 0 5px 0; font-size: 14px; opacity: 0.9;">This Month</h4>
-                            <p style="margin: 0; font-size: 28px; font-weight: bold;" id="thisMonthCount">0</p>
-                        </div>
+        <!-- Packages Section -->
+        <div id="packages" class="content-section" style="display: none;">
+            <h2>Package Management</h2>
+            <div style="margin-bottom: 20px;">
+                <button class="btn btn-success" onclick="showAddPackageForm()">Add New Package</button>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <input type="text" id="packageSearch" placeholder="Search packages..." onkeyup="searchPackages()">
+                <select id="packageFilterCategory" onchange="filterPackages()" style="width: 200px; display: inline-block;">
+                    <option value="all">All Categories</option>
+                    <option value="Adventure">Adventure</option>
+                    <option value="Beach">Beach</option>
+                    <option value="Mountain">Mountain</option>
+                    <option value="City">City</option>
+                </select>
+                <select id="packageFilterStatus" onchange="filterPackages()" style="width: 200px; display: inline-block;">
+                    <option value="all">All Status</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+            </div>
+            <table id="packagesTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Duration</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="packagesTableBody">
+                    <!-- Packages will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Add/Edit Package Form (Hidden by default) -->
+        <div id="addPackageForm" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="hideAddPackageForm()">&times;</span>
+                <h2 id="packageFormTitle">Add New Package</h2>
+                <form onsubmit="savePackage(event)">
+                    <input type="hidden" id="editingPackageId">
+                    
+                    <div class="form-group">
+                        <label for="packageName">Package Name</label>
+                        <input type="text" id="packageName" required>
                     </div>
-                </div>
-                
-                <!-- Search and Filter Section -->
-                <div style="margin-bottom: 20px;">
-                    <h3 style="margin-bottom: 15px; color: #333;">Search & Filter</h3>
-                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #e9ecef;">
-                        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 15px; align-items: end;">
-                            <div>
-                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #495057;">Search Customers</label>
-                                <input type="text" id="customerSearch" placeholder="Search by name, email, or phone..." onkeyup="searchCustomers()" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 5px; font-size: 14px;">
-                            </div>
-                            <div>
-                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #495057;">Status Filter</label>
-                                <select id="statusFilter" onchange="filterCustomers()" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 5px; font-size: 14px;">
-                                    <option value="all">All Status</option>
-                                    <option value="New Inquiry">🟣 New Inquiry</option>
-                                    <option value="Contacted">🟠 Contacted</option>
-                                    <option value="Confirmed">🟢 Confirmed</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #495057;">Package Filter</label>
-                                <select id="packageFilter" onchange="filterCustomers()" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 5px; font-size: 14px;">
-                                    <option value="all">All Packages</option>
-                                    <option value="Kerala Backwaters">Kerala Backwaters</option>
-                                    <option value="Rajasthan Heritage">Rajasthan Heritage</option>
-                                    <option value="Goa Beach">Goa Beach</option>
-                                    <option value="Taj Mahal Agra">Taj Mahal Agra</option>
-                                    <option value="Varanasi Spiritual">Varanasi Spiritual</option>
-                                    <option value="Leh Ladakh">Leh Ladakh</option>
-                                    <option value="Andaman Islands">Andaman Islands</option>
-                                    <option value="Himalayan Trek">Himalayan Trek</option>
-                                    <option value="Golden Temple Amritsar">Golden Temple Amritsar</option>
-                                    <option value="Mysore Palace">Mysore Palace</option>
-                                </select>
-                            </div>
-                            <div>
-                                <button class="btn" onclick="exportCustomers()" style="background: #28a745; padding: 10px 20px; font-weight: 600;">📊 Export</button>
-                            </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="packagePrice">Price (₹)</label>
+                            <input type="number" id="packagePrice" required>
                         </div>
-                    </div>
-                </div>
-                
-                <!-- Customer Table Section -->
-                <div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <h3 style="margin: 0; color: #333;">Customer Database</h3>
-                        <div style="font-size: 14px; color: #6c757d;">
-                            Showing <span id="showingCount">0</span> of <span id="totalCount">0</span> customers
+                        <div class="form-group">
+                            <label for="packageDuration">Duration</label>
+                            <input type="text" id="packageDuration" placeholder="e.g., 5 days 4 nights" required>
                         </div>
                     </div>
                     
-                    <!-- Responsive Table Container -->
-                    <div style="overflow-x: auto; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                        <table id="usersTable" style="width: 100%; border-collapse: collapse; background: white;">
-                            <thead>
-                                <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                                    <th style="padding: 15px 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #5a67d8;">ID</th>
-                                    <th style="padding: 15px 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #5a67d8;">Customer Name</th>
-                                    <th style="padding: 15px 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #5a67d8;">Email</th>
-                                    <th style="padding: 15px 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #5a67d8;">Phone</th>
-                                    <th style="padding: 15px 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #5a67d8;">Package</th>
-                                    <th style="padding: 15px 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #5a67d8;">Travel Date</th>
-                                    <th style="padding: 15px 12px; text-align: center; font-weight: 600; border-bottom: 2px solid #5a67d8;">People</th>
-                                    <th style="padding: 15px 12px; text-align: right; font-weight: 600; border-bottom: 2px solid #5a67d8;">Amount</th>
-                                    <th style="padding: 15px 12px; text-align: center; font-weight: 600; border-bottom: 2px solid #5a67d8;">Status</th>
-                                    <th style="padding: 15px 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #5a67d8;">Received</th>
-                                    <th style="padding: 15px 12px; text-align: center; font-weight: 600; border-bottom: 2px solid #5a67d8;">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="usersTableBody">
-                                <!-- Customers will be loaded here from localStorage -->
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <div id="noUsers" style="text-align: center; padding: 60px 40px; color: #6c757d; background: #f8f9fa; border-radius: 8px; margin-top: 20px;">
-                        <div style="font-size: 48px; margin-bottom: 20px; opacity: 0.3;">👥</div>
-                        <h3 style="margin: 0 0 10px 0; color: #495057;">No Customers Found</h3>
-                        <p style="margin: 0;">Customers will appear here when they submit inquiries through the website.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="bookings" class="hidden">
-            <div class="card">
-                <h2>Manage Bookings</h2>
-                
-                <!-- Booking Stats -->
-                <div style="display: flex; gap: 15px; margin-bottom: 20px;">
-                    <div style="background: #e8f5e8; padding: 10px; border-radius: 5px; flex: 1;">
-                        <h4 style="margin: 0; color: #2e7d32;">Confirmed</h4>
-                        <p style="margin: 5px 0 0 0; font-size: 18px; font-weight: bold;" id="confirmedCount">0</p>
-                    </div>
-                    <div style="background: #fff3cd; padding: 10px; border-radius: 5px; flex: 1;">
-                        <h4 style="margin: 0; color: #856404;">Pending</h4>
-                        <p style="margin: 5px 0 0 0; font-size: 18px; font-weight: bold;" id="pendingCount">0</p>
-                    </div>
-                    <div style="background: #f8d7da; padding: 10px; border-radius: 5px; flex: 1;">
-                        <h4 style="margin: 0; color: #721c24;">Cancelled</h4>
-                        <p style="margin: 5px 0 0 0; font-size: 18px; font-weight: bold;" id="cancelledCount">0</p>
-                    </div>
-                </div>
-                
-                <!-- Filter and Actions -->
-                <div style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
-                    <select id="bookingFilter" onchange="filterBookings()" style="padding: 5px; border: 1px solid #ddd; border-radius: 3px;">
-                        <option value="all">All Bookings</option>
-                        <option value="confirmed">Confirmed</option>
-                        <option value="pending">Pending</option>
-                        <option value="cancelled">Cancelled</option>
-                    </select>
-                    <button class="btn" onclick="showAddBookingForm()">Add Booking</button>
-                    <button class="btn" onclick="exportBookings()" style="background: #28a745;">Export</button>
-                </div>
-                
-                <!-- Add Booking Form (Hidden by default) -->
-                <div id="addBookingForm" class="hidden" style="background: #f8f9fa; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
-                    <h3>Add New Booking</h3>
-                    <select id="bookingUser" style="width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ddd; border-radius: 3px;">
-                        <option value="">Select Customer</option>
-                    </select>
-                    <select id="bookingPackage" style="width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ddd; border-radius: 3px;">
-                        <option value="">Select Package</option>
-                        <option value="Kerala Backwaters">Kerala Backwaters - ₹2,500</option>
-                        <option value="Rajasthan Heritage">Rajasthan Heritage - ₹1,800</option>
-                        <option value="Goa Beach">Goa Beach - ₹3,200</option>
-                        <option value="Taj Mahal Agra">Taj Mahal Agra - ₹1,500</option>
-                        <option value="Varanasi Spiritual">Varanasi Spiritual - ₹2,000</option>
-                        <option value="Leh Ladakh">Leh Ladakh - ₹4,500</option>
-                        <option value="Andaman Islands">Andaman Islands - ₹5,000</option>
-                        <option value="Himalayan Trek">Himalayan Trek - ₹3,800</option>
-                        <option value="Golden Temple Amritsar">Golden Temple Amritsar - ₹1,200</option>
-                        <option value="Mysore Palace">Mysore Palace - ₹1,600</option>
-                    </select>
-                    <input type="date" id="bookingDate" placeholder="Travel Date" style="width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ddd; border-radius: 3px;">
-                    <input type="number" id="bookingPeople" placeholder="Number of People" min="1" style="width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ddd; border-radius: 3px;">
-                    <select id="bookingStatus" style="width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ddd; border-radius: 3px;">
-                        <option value="Confirmed">Confirmed</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Cancelled">Cancelled</option>
-                    </select>
-                    <input type="text" id="bookingPayment" placeholder="Payment Status (Paid/Unpaid/Partial)" style="width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ddd; border-radius: 3px;">
-                    <textarea id="bookingNotes" placeholder="Special Requirements (optional)" style="width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ddd; border-radius: 3px; height: 60px;"></textarea>
-                    <button class="btn" onclick="addBooking()">Add Booking</button>
-                    <button class="btn" onclick="hideAddBookingForm()" style="background: #6c757d; margin-left: 5px;">Cancel</button>
-                </div>
-                
-                <table id="bookingsTable">
-                    <tr><th>ID</th><th>Customer</th><th>Package</th><th>Date</th><th>People</th><th>Amount</th><th>Status</th><th>Payment</th><th>Actions</th></tr>
-                    <!-- Bookings will be loaded here from localStorage -->
-                </table>
-                
-                <div id="noBookingsList" style="text-align: center; padding: 40px; color: #666;">
-                    No bookings yet. Confirm customer inquiries or add bookings manually.
-                </div>
-            </div>
-        </div>
-
-        <div id="packages" class="hidden">
-            <div class="card">
-                <h2>Packages</h2>
-                
-                <!-- Add Package Button -->
-                <div style="margin-bottom: 20px;">
-                    <button class="btn" onclick="showAddPackageForm()" style="background: #28a745;">➕ Add New Package</button>
-                </div>
-                
-                <!-- Add Package Form -->
-                <div id="addPackageForm" class="hidden" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e9ecef;">
-                    <h3 style="margin-top: 0;" id="packageFormTitle">Add New Package</h3>
-                    <input type="hidden" id="editingPackageId" value="">
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
-                        <div>
-                            <label style="display: block; margin-bottom: 5px; font-weight: 600;">Package Name *</label>
-                            <input type="text" id="packageName" placeholder="e.g., Kerala Backwaters" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px;">
-                        </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 5px; font-weight: 600;">Price per Person (₹) *</label>
-                            <input type="number" id="packagePrice" placeholder="2500" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px;">
-                        </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 5px; font-weight: 600;">Duration *</label>
-                            <select id="packageDuration" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px;">
-                                <option value="">Select Duration</option>
-                                <option value="1 Day">1 Day</option>
-                                <option value="2 Days">2 Days</option>
-                                <option value="3 Days">3 Days</option>
-                                <option value="4 Days">4 Days</option>
-                                <option value="5 Days">5 Days</option>
-                                <option value="6 Days">6 Days</option>
-                                <option value="7 Days">7 Days</option>
-                                <option value="10 Days">10 Days</option>
-                                <option value="14 Days">14 Days</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 5px; font-weight: 600;">Category *</label>
-                            <select id="packageCategory" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="packageCategory">Category</label>
+                            <select id="packageCategory" required>
                                 <option value="">Select Category</option>
                                 <option value="Adventure">Adventure</option>
                                 <option value="Beach">Beach</option>
-                                <option value="Heritage">Heritage</option>
-                                <option value="Hill Station">Hill Station</option>
-                                <option value="Pilgrimage">Pilgrimage</option>
-                                <option value="Wildlife">Wildlife</option>
-                                <option value="Romantic">Romantic</option>
-                                <option value="Family">Family</option>
+                                <option value="Mountain">Mountain</option>
+                                <option value="City">City</option>
                             </select>
                         </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 5px; font-weight: 600;">Difficulty Level</label>
-                            <select id="packageDifficulty" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px;">
+                        <div class="form-group">
+                            <label for="packageDifficulty">Difficulty</label>
+                            <select id="packageDifficulty" required>
+                                <option value="">Select Difficulty</option>
                                 <option value="Easy">Easy</option>
                                 <option value="Moderate">Moderate</option>
                                 <option value="Difficult">Difficult</option>
                             </select>
                         </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 5px; font-weight: 600;">Best Season</label>
-                            <select id="packageSeason" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px;">
-                                <option value="All Year">All Year</option>
-                                <option value="Summer">Summer (Apr-Jun)</option>
-                                <option value="Monsoon">Monsoon (Jul-Sep)</option>
-                                <option value="Winter">Winter (Oct-Mar)</option>
-                                <option value="Spring">Spring (Feb-Mar)</option>
-                                <option value="Autumn">Autumn (Sep-Nov)</option>
-                            </select>
-                        </div>
                     </div>
                     
-                    <div style="margin-top: 15px;">
-                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Description *</label>
-                        <textarea id="packageDescription" placeholder="Describe the package highlights, itinerary, and inclusions..." style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px; height: 80px; resize: vertical;"></textarea>
+                    <div class="form-group">
+                        <label for="packageDescription">Description</label>
+                        <textarea id="packageDescription" rows="4" required></textarea>
                     </div>
                     
-                    <div style="margin-top: 15px;">
-                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Inclusions</label>
-                        <div style="max-height: 120px; overflow-y: auto; border: 1px solid #ddd; border-radius: 3px; padding: 10px; background: white;">
-                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px;">
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Accommodation" style="margin-right: 8px;"> Accommodation
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Meals" style="margin-right: 8px;"> Meals
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Breakfast" style="margin-right: 8px;"> Breakfast
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Lunch" style="margin-right: 8px;"> Lunch
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Dinner" style="margin-right: 8px;"> Dinner
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Transport" style="margin-right: 8px;"> Transport
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Airport Transfer" style="margin-right: 8px;"> Airport Transfer
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Train Tickets" style="margin-right: 8px;"> Train Tickets
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Flight Tickets" style="margin-right: 8px;"> Flight Tickets
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Bus Tickets" style="margin-right: 8px;"> Bus Tickets
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Guide" style="margin-right: 8px;"> Guide
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Tour Guide" style="margin-right: 8px;"> Tour Guide
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Expert Guide" style="margin-right: 8px;"> Expert Guide
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Entry Fees" style="margin-right: 8px;"> Entry Fees
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Monument Fees" style="margin-right: 8px;"> Monument Fees
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Museum Fees" style="margin-right: 8px;"> Museum Fees
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Park Fees" style="margin-right: 8px;"> Park Fees
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Water Sports" style="margin-right: 8px;"> Water Sports
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Adventure Activities" style="margin-right: 8px;"> Adventure Activities
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Sightseeing" style="margin-right: 8px;"> Sightseeing
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="City Tour" style="margin-right: 8px;"> City Tour
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Village Tour" style="margin-right: 8px;"> Village Tour
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Boat Ride" style="margin-right: 8px;"> Boat Ride
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Houseboat Stay" style="margin-right: 8px;"> Houseboat Stay
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Cruise" style="margin-right: 8px;"> Cruise
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Camping" style="margin-right: 8px;"> Camping
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Trekking Equipment" style="margin-right: 8px;"> Trekking Equipment
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Photography" style="margin-right: 8px;"> Photography
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Insurance" style="margin-right: 8px;"> Insurance
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Medical Kit" style="margin-right: 8px;"> Medical Kit
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="First Aid" style="margin-right: 8px;"> First Aid
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Permits" style="margin-right: 8px;"> Permits
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Forest Permits" style="margin-right: 8px;"> Forest Permits
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Wildlife Safari" style="margin-right: 8px;"> Wildlife Safari
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Jeep Safari" style="margin-right: 8px;"> Jeep Safari
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Elephant Safari" style="margin-right: 8px;"> Elephant Safari
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Cultural Show" style="margin-right: 8px;"> Cultural Show
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Folk Dance" style="margin-right: 8px;"> Folk Dance
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Music Concert" style="margin-right: 8px;"> Music Concert
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Bonfire" style="margin-right: 8px;"> Bonfire
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="BBQ Dinner" style="margin-right: 8px;"> BBQ Dinner
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Special Dinner" style="margin-right: 8px;"> Special Dinner
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Welcome Drink" style="margin-right: 8px;"> Welcome Drink
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Fruit Basket" style="margin-right: 8px;"> Fruit Basket
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Souvenir" style="margin-right: 8px;"> Souvenir
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Local Experience" style="margin-right: 8px;"> Local Experience
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Cooking Class" style="margin-right: 8px;"> Cooking Class
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Yoga Session" style="margin-right: 8px;"> Yoga Session
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Meditation" style="margin-right: 8px;"> Meditation
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Spa Treatment" style="margin-right: 8px;"> Spa Treatment
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Massage" style="margin-right: 8px;"> Massage
-                                </label>
-                            </div>
-                        </div>
+                    <div style="text-align: right; margin-top: 20px;">
+                        <button type="button" class="btn" onclick="hideAddPackageForm()">Cancel</button>
+                        <button type="submit" class="btn btn-success">Save Package</button>
                     </div>
-                    
-                    <div style="margin-top: 15px;">
-                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Exclusions</label>
-                        <div style="max-height: 120px; overflow-y: auto; border: 1px solid #ddd; border-radius: 3px; padding: 10px; background: white;">
-                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px;">
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Personal Expenses" style="margin-right: 8px;"> Personal Expenses
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Shopping" style="margin-right: 8px;"> Shopping
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Souvenirs" style="margin-right: 8px;"> Souvenirs
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Tips" style="margin-right: 8px;"> Tips
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Guide Tips" style="margin-right: 8px;"> Guide Tips
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Driver Tips" style="margin-right: 8px;"> Driver Tips
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Porter Tips" style="margin-right: 8px;"> Porter Tips
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Laundry" style="margin-right: 8px;"> Laundry
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Mineral Water" style="margin-right: 8px;"> Mineral Water
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Cold Drinks" style="margin-right: 8px;"> Cold Drinks
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Alcohol" style="margin-right: 8px;"> Alcohol
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Beverages" style="margin-right: 8px;"> Beverages
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Snacks" style="margin-right: 8px;"> Snacks
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Room Service" style="margin-right: 8px;"> Room Service
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Telephone Calls" style="margin-right: 8px;"> Telephone Calls
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Internet" style="margin-right: 8px;"> Internet
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="WiFi" style="margin-right: 8px;"> WiFi
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Camera Fees" style="margin-right: 8px;"> Camera Fees
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Video Camera" style="margin-right: 8px;"> Video Camera
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Drone Photography" style="margin-right: 8px;"> Drone Photography
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Professional Photography" style="margin-right: 8px;"> Professional Photography
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Insurance" style="margin-right: 8px;"> Insurance
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Travel Insurance" style="margin-right: 8px;"> Travel Insurance
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Medical Insurance" style="margin-right: 8px;"> Medical Insurance
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Emergency Evacuation" style="margin-right: 8px;"> Emergency Evacuation
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Rescue Operations" style="margin-right: 8px;"> Rescue Operations
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Helicopter Rescue" style="margin-right: 8px;"> Helicopter Rescue
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Personal Medication" style="margin-right: 8px;"> Personal Medication
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Doctor Consultation" style="margin-right: 8px;"> Doctor Consultation
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Hospitalization" style="margin-right: 8px;"> Hospitalization
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Surgery" style="margin-right: 8px;"> Surgery
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Toiletries" style="margin-right: 8px;"> Toiletries
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Towels" style="margin-right: 8px;"> Towels
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Soap" style="margin-right: 8px;"> Soap
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Shampoo" style="margin-right: 8px;"> Shampoo
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Conditioner" style="margin-right: 8px;"> Conditioner
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Toilet Paper" style="margin-right: 8px;"> Toilet Paper
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Extra Luggage" style="margin-right: 8px;"> Extra Luggage
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Oversized Baggage" style="margin-right: 8px;"> Oversized Baggage
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Sports Equipment" style="margin-right: 8px;"> Sports Equipment
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Bicycle" style="margin-right: 8px;"> Bicycle
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Motorcycle" style="margin-right: 8px;"> Motorcycle
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Climbing Gear" style="margin-right: 8px;"> Climbing Gear
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Diving Equipment" style="margin-right: 8px;"> Diving Equipment
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Fishing Gear" style="margin-right: 8px;"> Fishing Gear
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Ski Equipment" style="margin-right: 8px;"> Ski Equipment
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Golf Equipment" style="margin-right: 8px;"> Golf Equipment
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Tennis Racket" style="margin-right: 8px;"> Tennis Racket
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Badminton" style="margin-right: 8px;"> Badminton
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Swimming Costume" style="margin-right: 8px;"> Swimming Costume
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Goggles" style="margin-right: 8px;"> Goggles
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Sunscreen" style="margin-right: 8px;"> Sunscreen
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Mosquito Repellent" style="margin-right: 8px;"> Mosquito Repellent
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Warm Clothes" style="margin-right: 8px;"> Warm Clothes
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Rain Gear" style="margin-right: 8px;"> Rain Gear
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Snow Boots" style="margin-right: 8px;"> Snow Boots
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Hiking Boots" style="margin-right: 8px;"> Hiking Boots
-                                </label>
-                                <label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-                                    <input type="checkbox" value="Special Clothing" style="margin-right: 8px;"> Special Clothing
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
-                        <div>
-                            <label style="display: block; margin-bottom: 5px; font-weight: 600;">Minimum People</label>
-                            <input type="number" id="packageMinPeople" value="2" min="1" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px;">
-                        </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 5px; font-weight: 600;">Maximum People</label>
-                            <input type="number" id="packageMaxPeople" value="20" min="1" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px;">
-                        </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 5px; font-weight: 600;">Transportation</label>
-                            <select id="packageTransport" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px;">
-                                <option value="Bus">Bus</option>
-                                <option value="Car">Car</option>
-                                <option value="Train">Train</option>
-                                <option value="Flight">Flight</option>
-                                <option value="Mixed">Mixed</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 5px; font-weight: 600;">Accommodation Type</label>
-                            <select id="packageAccommodation" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px;">
-                                <option value="Budget">Budget</option>
-                                <option value="Standard">Standard</option>
-                                <option value="Deluxe">Deluxe</option>
-                                <option value="Luxury">Luxury</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div style="margin-top: 20px;">
-                        <button class="btn" onclick="savePackage()" style="background: #28a745; margin-right: 10px;">💾 Save Package</button>
-                        <button class="btn" onclick="hidePackageForm()" style="background: #6c757d;">❌ Cancel</button>
-                    </div>
-                </div>
-                
-                <!-- Package Statistics -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
-                    <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; text-align: center;">
-                        <h4 style="margin: 0; color: #1565c0;">Total Packages</h4>
-                        <p style="margin: 5px 0 0 0; font-size: 24px; font-weight: bold;" id="totalPackagesCount">10</p>
-                    </div>
-                    <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; text-align: center;">
-                        <h4 style="margin: 0; color: #2e7d32;">Active Packages</h4>
-                        <p style="margin: 5px 0 0 0; font-size: 24px; font-weight: bold;" id="activePackagesCount">10</p>
-                    </div>
-                    <div style="background: #fff3e0; padding: 15px; border-radius: 8px; text-align: center;">
-                        <h4 style="margin: 0; color: #ef6c00;">Avg. Price</h4>
-                        <p style="margin: 5px 0 0 0; font-size: 24px; font-weight: bold;" id="avgPackagePrice">₹2,760</p>
-                    </div>
-                </div>
-                
-                <!-- Search and Filter -->
-                <div style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
-                    <input type="text" id="packageSearch" placeholder="Search packages..." onkeyup="searchPackages()" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 3px;">
-                    <select id="packageFilterCategory" onchange="filterPackages()" style="padding: 8px; border: 1px solid #ddd; border-radius: 3px;">
-                        <option value="all">All Categories</option>
-                        <option value="Adventure">Adventure</option>
-                        <option value="Beach">Beach</option>
-                        <option value="Heritage">Heritage</option>
-                        <option value="Hill Station">Hill Station</option>
-                        <option value="Pilgrimage">Pilgrimage</option>
-                    </select>
-                    <select id="packageFilterStatus" onchange="filterPackages()" style="padding: 8px; border: 1px solid #ddd; border-radius: 3px;">
-                        <option value="all">All Status</option>
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
-                    </select>
-                </div>
-                
-                <!-- Packages Table -->
-                <table id="packagesTable">
-                    <tr><th>ID</th><th>Name</th><th>Category</th><th>Duration</th><th>Price</th><th>Status</th><th>Actions</th></tr>
-                    <!-- Packages will be loaded here from localStorage -->
-                </table>
+                </form>
             </div>
         </div>
 
-        <div id="settings" class="hidden">
-            <div class="card">
-                <h2>Settings</h2>
-                
-                <!-- Profile Settings -->
-                <div style="margin-bottom: 30px;">
-                    <h3>Admin Profile</h3>
-                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #e9ecef;">
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
-                            <div>
-                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #495057;">Admin Name</label>
-                                <input type="text" id="adminName" value="Admin" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 5px;">
-                            </div>
-                            <div>
-                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #495057;">Email</label>
-                                <input type="email" id="adminEmail" value="admin@travelasha.com" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 5px;">
-                            </div>
-                            <div>
-                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #495057;">Phone</label>
-                                <input type="tel" id="adminPhone" value="+91-9876543210" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 5px;">
-                            </div>
-                        </div>
-                        <div style="margin-top: 15px;">
-                            <button class="btn" onclick="saveProfile()" style="background: #007bff;">Save Profile</button>
-                        </div>
-                    </div>
+        <!-- Bookings Section -->
+        <div id="bookings" class="content-section" style="display: none;">
+            <h2>Booking Management</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Customer</th>
+                        <th>Package</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="bookingsTableBody">
+                    <!-- Bookings will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Users Section -->
+        <div id="users" class="content-section" style="display: none;">
+            <h2>User Management</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Registered</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    <!-- Users will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Analytics Section -->
+        <div id="analytics" class="content-section" style="display: none;">
+            <h2>Analytics</h2>
+            <div class="stats">
+                <div class="stat">
+                    <h3 id="activePackages">0</h3>
+                    <p>Active Packages</p>
                 </div>
-                
-                <!-- Business Settings -->
-                <div style="margin-bottom: 30px;">
-                    <h3>Business Information</h3>
-                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #e9ecef;">
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
-                            <div>
-                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #495057;">Company Name</label>
-                                <input type="text" id="companyName" value="Travelasha Tours" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 5px;">
-                            </div>
-                            <div>
-                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #495057;">Currency</label>
-                                <select id="currency" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 5px;">
-                                    <option value="₹">Indian Rupee (₹)</option>
-                                    <option value="$">US Dollar ($)</option>
-                                    <option value="€">Euro (€)</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #495057;">Tax Rate (%)</label>
-                                <input type="number" id="taxRate" value="5" min="0" max="100" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 5px;">
-                            </div>
-                        </div>
-                        <div style="margin-top: 15px;">
-                            <button class="btn" onclick="saveBusinessSettings()" style="background: #28a745;">Save Business Settings</button>
-                        </div>
-                    </div>
+                <div class="stat">
+                    <h3 id="pendingBookings">0</h3>
+                    <p>Pending Bookings</p>
                 </div>
-                
-                <!-- Data Management -->
-                <div>
-                    <h3>Data Management</h3>
-                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #e9ecef;">
-                        <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px;">
-                            <button class="btn" onclick="exportAllData()" style="background: #007bff;">📊 Export All Data</button>
-                            <button class="btn" onclick="clearAllData()" style="background: #dc3545;">🗑️ Clear All Data</button>
-                        </div>
-                        <div style="display: flex; gap: 20px; font-size: 14px; color: #6c757d;">
-                            <span><strong>Total Customers:</strong> <span id="totalCustomersInfo">0</span></span>
-                            <span><strong>Total Bookings:</strong> <span id="totalBookingsInfo">0</span></span>
-                            <span><strong>Storage Used:</strong> <span id="storageUsed">0 KB</span></span>
-                        </div>
-                    </div>
+                <div class="stat">
+                    <h3 id="avgPackagePrice">₹0</h3>
+                    <p>Average Package Price</p>
+                </div>
+                <div class="stat">
+                    <h3 id="conversionRate">0%</h3>
+                    <p>Conversion Rate</p>
                 </div>
             </div>
         </div>
 
-        <script>
-            function showPage(page) {
-                var pages = ['dashboard', 'users', 'bookings', 'packages', 'settings'];
-                for (var i = 0; i < pages.length; i++) {
-                    document.getElementById(pages[i]).className = 'hidden';
+        <!-- Settings Section -->
+        <div id="settings" class="content-section" style="display: none;">
+            <h2>Settings</h2>
+            <div class="form-group">
+                <label>Site Name</label>
+                <input type="text" value="Travelasha">
+            </div>
+            <div class="form-group">
+                <label>Admin Email</label>
+                <input type="email" value="admin@travelasha.com">
+            </div>
+            <div class="form-group">
+                <label>Currency</label>
+                <select>
+                    <option value="INR" selected>Indian Rupee (₹)</option>
+                    <option value="USD">US Dollar ($)</option>
+                    <option value="EUR">Euro (€)</option>
+                </select>
+            </div>
+            <button class="btn btn-success">Save Settings</button>
+        </div>
+    </div>
+
+    <script>
+        // Initialize data
+        let packages = JSON.parse(localStorage.getItem('packages') || '[]');
+        let bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+        let users = JSON.parse(localStorage.getItem('users') || '[]');
+
+        // Initialize sample data if empty
+        if (packages.length === 0) {
+            packages = [
+                {
+                    id: 1,
+                    name: 'Himalayan Adventure',
+                    category: 'Adventure',
+                    price: 25000,
+                    duration: '7 days 6 nights',
+                    difficulty: 'Difficult',
+                    description: 'Experience the majestic Himalayas with expert guides.',
+                    status: 'Active'
+                },
+                {
+                    id: 2,
+                    name: 'Goa Beach Paradise',
+                    category: 'Beach',
+                    price: 15000,
+                    duration: '5 days 4 nights',
+                    difficulty: 'Easy',
+                    description: 'Relax on the beautiful beaches of Goa.',
+                    status: 'Active'
                 }
-                document.getElementById(page).className = '';
-                document.getElementById('title').textContent = page.charAt(0).toUpperCase() + page.slice(1);
-                
-                // Load sample data on first visit
-                loadSampleUsers();
-                
-                // Load data when showing pages
-                if (page === 'users') {
-                    setTimeout(() => loadUsers(), 100); // Small delay to ensure data is loaded
-                } else if (page === 'bookings') {
-                    loadBookings();
-                    loadUsersForBooking();
-                } else if (page === 'dashboard') {
-                    loadDashboard();
-                } else if (page === 'packages') {
-                    loadPackages();
-                } else if (page === 'settings') {
-                    loadSettings();
-                    updateSystemInfo();
-                }
-            }
+            ];
+            localStorage.setItem('packages', JSON.stringify(packages));
+        }
+
+        // Show section
+        function showSection(sectionId, linkElement) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
             
-            function logout() {
-                localStorage.removeItem('isLoggedIn');
-                window.location.href = 'login.html';
-            }
+            // Remove active class from all links
+            document.querySelectorAll('.sidebar a').forEach(link => {
+                link.classList.remove('active');
+            });
             
-            function saveSettings(e) {
-                e.preventDefault();
-                alert('Settings saved!');
-            }
+            // Show selected section
+            document.getElementById(sectionId).style.display = 'block';
+            linkElement.classList.add('active');
             
-            // Dashboard Functions
-            function loadDashboard() {
-                var users = JSON.parse(localStorage.getItem('users') || '[]');
-                var bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-                
-                document.getElementById('totalUsers').textContent = users.length;
-                document.getElementById('totalBookings').textContent = bookings.length;
-                
-                // Calculate revenue
-                var revenue = 0;
-                for (var i = 0; i < bookings.length; i++) {
-                    revenue += bookings[i].amount;
-                }
-                document.getElementById('totalRevenue').textContent = '₹' + revenue;
-                
-                // Load recent bookings and customers
-                loadRecentBookings();
-                loadRecentCustomers();
-            }
-            
-            function loadRecentBookings() {
-                var bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-                var table = document.getElementById('recentBookingsTable');
-                var noBookings = document.getElementById('noBookings');
-                
-                // Clear existing rows (except header)
-                var rows = table.rows;
-                for (var i = rows.length - 1; i > 0; i--) {
-                    table.deleteRow(i);
-                }
-                
-                if (bookings.length === 0) {
-                    table.style.display = 'none';
-                    noBookings.style.display = 'block';
-                } else {
-                    table.style.display = 'table';
-                    noBookings.style.display = 'none';
-                    
-                    // Show last 5 bookings
-                    var recentBookings = bookings.slice(-5);
-                    for (var i = 0; i < recentBookings.length; i++) {
-                        var booking = recentBookings[i];
-                        var row = table.insertRow();
-                        row.innerHTML = '<td>' + booking.id + '</td><td>' + booking.customerName + '</td><td>' + booking.package + '</td><td>₹' + booking.amount + '</td><td>' + booking.status + '</td>';
-                    }
-                }
-            }
-            
-            // Booking Management Functions
-            function showAddBookingForm() {
-                document.getElementById('addBookingForm').className = '';
-            }
-            
-            function hideAddBookingForm() {
-                document.getElementById('addBookingForm').className = 'hidden';
-            }
-            
-            function loadUsersForBooking() {
-                var users = JSON.parse(localStorage.getItem('users') || '[]');
-                var select = document.getElementById('bookingUser');
-                
-                // Clear existing options
-                select.innerHTML = '<option value="">Select User</option>';
-                
-                for (var i = 0; i < users.length; i++) {
-                    var option = document.createElement('option');
-                    option.value = users[i].id;
-                    option.textContent = users[i].name + ' (' + users[i].email + ')';
-                    select.appendChild(option);
-                }
-            }
-            
-            function addBooking() {
-                var userId = document.getElementById('bookingUser').value;
-                var packageName = document.getElementById('bookingPackage').value;
-                var bookingDate = document.getElementById('bookingDate').value;
-                var bookingPeople = document.getElementById('bookingPeople').value;
-                var bookingStatus = document.getElementById('bookingStatus').value;
-                var bookingPayment = document.getElementById('bookingPayment').value;
-                var bookingNotes = document.getElementById('bookingNotes').value;
-                
-                if (!userId || !packageName || !bookingDate || !bookingPeople) {
-                    alert('Please fill all required fields');
-                    return;
-                }
-                
-                // Get user details
-                var users = JSON.parse(localStorage.getItem('users') || '[]');
-                var user = users.find(u => u.id === userId);
-                
-                if (!user) {
-                    alert('Customer not found');
-                    return;
-                }
-                
-                // Get package price
-                var packagePrices = {
-                    'Kerala Backwaters': 2500,
-                    'Rajasthan Heritage': 1800,
-                    'Goa Beach': 3200,
-                    'Taj Mahal Agra': 1500,
-                    'Varanasi Spiritual': 2000,
-                    'Leh Ladakh': 4500,
-                    'Andaman Islands': 5000,
-                    'Himalayan Trek': 3800,
-                    'Golden Temple Amritsar': 1200,
-                    'Mysore Palace': 1600
-                };
-                
-                var bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-                var newBooking = {
-                    id: 'B' + (bookings.length + 1).toString().padStart(3, '0'),
-                    userId: userId,
-                    customerName: user.name,
-                    package: packageName,
-                    date: bookingDate,
-                    people: parseInt(bookingPeople),
-                    amount: packagePrices[packageName] * parseInt(bookingPeople),
-                    status: bookingStatus,
-                    payment: bookingPayment || 'Unpaid',
-                    notes: bookingNotes
-                };
-                
-                bookings.push(newBooking);
-                localStorage.setItem('bookings', JSON.stringify(bookings));
-                
-                // Clear form
-                document.getElementById('bookingUser').value = '';
-                document.getElementById('bookingPackage').value = '';
-                document.getElementById('bookingDate').value = '';
-                document.getElementById('bookingPeople').value = '';
-                document.getElementById('bookingStatus').value = 'Confirmed';
-                document.getElementById('bookingPayment').value = '';
-                document.getElementById('bookingNotes').value = '';
-                
-                hideAddBookingForm();
-            if (page === 'users') {
-                setTimeout(() => loadUsers(), 100); // Small delay to ensure data is loaded
-            } else if (page === 'bookings') {
+            // Load data for the section
+            if (sectionId === 'packages') {
+                loadPackages();
+            } else if (sectionId === 'bookings') {
                 loadBookings();
-                loadUsersForBooking();
-            } else if (page === 'dashboard') {
-                loadDashboard();
-            }
-        }
-        
-        function logout() {
-            localStorage.removeItem('isLoggedIn');
-            window.location.href = 'login.html';
-        }
-        
-        function saveSettings(e) {
-            e.preventDefault();
-            alert('Settings saved!');
-        }
-        
-        // Dashboard Functions
-        function loadDashboard() {
-            var users = JSON.parse(localStorage.getItem('users') || '[]');
-            var bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-            
-            document.getElementById('totalUsers').textContent = users.length;
-            document.getElementById('totalBookings').textContent = bookings.length;
-            
-            // Calculate revenue
-            var revenue = 0;
-            for (var i = 0; i < bookings.length; i++) {
-                revenue += bookings[i].amount;
-            }
-            document.getElementById('totalRevenue').textContent = '₹' + revenue;
-            
-            // Load recent bookings and customers
-            loadRecentBookings();
-            loadRecentCustomers();
-        }
-        
-        function loadRecentBookings() {
-            var bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-            var table = document.getElementById('recentBookingsTable');
-            var noBookings = document.getElementById('noBookings');
-            
-            // Clear existing rows (except header)
-            var rows = table.rows;
-            for (var i = rows.length - 1; i > 0; i--) {
-                table.deleteRow(i);
-            }
-            
-            if (bookings.length === 0) {
-                table.style.display = 'none';
-                noBookings.style.display = 'block';
-            } else {
-                table.style.display = 'table';
-                noBookings.style.display = 'none';
-                
-                // Show last 5 bookings
-                var recentBookings = bookings.slice(-5);
-                for (var i = 0; i < recentBookings.length; i++) {
-                    var booking = recentBookings[i];
-                    var row = table.insertRow();
-                    row.innerHTML = '<td>' + booking.id + '</td><td>' + booking.customerName + '</td><td>' + booking.package + '</td><td>₹' + booking.amount + '</td><td>' + booking.status + '</td>';
-                }
-            }
-        }
-        
-        function loadRecentCustomers() {
-            var users = JSON.parse(localStorage.getItem('users') || '[]');
-            var table = document.getElementById('recentCustomersTable');
-            var noCustomers = document.getElementById('noCustomers');
-            
-            // Clear existing rows (except header)
-            var rows = table.rows;
-            for (var i = rows.length - 1; i > 0; i--) {
-                table.deleteRow(i);
-            }
-            
-            if (users.length === 0) {
-                table.style.display = 'none';
-                noCustomers.style.display = 'block';
-            } else {
-                table.style.display = 'table';
-                noCustomers.style.display = 'none';
-                
-                // Show last 5 customers, prioritized by status
-                var sortedUsers = users.sort((a, b) => {
-                    // Priority: New Inquiry > Contacted > Confirmed
-                    var statusOrder = { 'New Inquiry': 0, 'Contacted': 1, 'Confirmed': 2 };
-                    return statusOrder[a.status] - statusOrder[b.status];
-                });
-                
-                var recentCustomers = sortedUsers.slice(0, 5);
-                for (var i = 0; i < recentCustomers.length; i++) {
-                    var customer = recentCustomers[i];
-                    var row = table.insertRow();
-                    
-                    var statusColor = customer.status === 'New Inquiry' ? '#9c27b0' : 
-                                     customer.status === 'Contacted' ? '#ff9800' : '#4caf50';
-                    
-                    var actionButtons = '';
-                    if (customer.status === 'New Inquiry') {
-                        actionButtons = '<button class="btn" onclick="confirmCustomer(\'' + customer.id + '\')" style="background: #28a745; padding: 4px 8px; font-size: 12px; margin-right: 5px;">✅ Confirm</button>' +
-                                         '<button class="btn" onclick="rejectCustomer(\'' + customer.id + '\')" style="background: #dc3545; padding: 4px 8px; font-size: 12px;">❌ Reject</button>';
-                    } else if (customer.status === 'Contacted') {
-                        actionButtons = '<button class="btn" onclick="confirmCustomer(\'' + customer.id + '\')" style="background: #28a745; padding: 4px 8px; font-size: 12px; margin-right: 5px;">✅ Confirm</button>' +
-                                         '<button class="btn" onclick="rejectCustomer(\'' + customer.id + '\')" style="background: #dc3545; padding: 4px 8px; font-size: 12px;">❌ Reject</button>';
-                    } else if (customer.status === 'Confirmed') {
-                        actionButtons = '<button class="btn" onclick="rejectCustomer(\'' + customer.id + '\')" style="background: #dc3545; padding: 4px 8px; font-size: 12px;">❌ Cancel</button>';
-                    }
-                    
-                    row.innerHTML = '<td>' + customer.id + '</td><td>' + customer.name + '</td><td>' + customer.package + '</td><td><span style="padding: 2px 8px; border-radius: 3px; font-size: 12px; background: ' + statusColor + '; color: white;">' + customer.status + '</span></td><td>' + customer.receivedDate + '</td><td>' + actionButtons + '</td>';
-                }
-            }
-        }
-        
-        function confirmCustomer(customerId) {
-            var users = JSON.parse(localStorage.getItem('users') || '[]');
-            var userIndex = users.findIndex(u => u.id === customerId);
-            
-            if (userIndex !== -1) {
-                var user = users[userIndex];
-                
-                // Update user status to Confirmed
-                users[userIndex].status = 'Confirmed';
-                localStorage.setItem('users', JSON.stringify(users));
-                
-                // Add to bookings table
-                var bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-                var newBooking = {
-                    id: 'B' + (bookings.length + 1).toString().padStart(3, '0'),
-                    userId: user.id,
-                    customerName: user.name,
-                    package: user.package,
-                    date: user.travelDate,
-                    people: user.people,
-                    amount: user.amount,
-                    status: 'Confirmed',
-                    payment: 'Paid',
-                    notes: user.message
-                };
-                bookings.push(newBooking);
-                localStorage.setItem('bookings', JSON.stringify(bookings));
-                
-                // Refresh dashboard
-                loadDashboard();
-                
-                alert('Customer ' + user.name + ' confirmed and booking created!');
-            }
-        }
-        
-        function rejectCustomer(customerId) {
-            var users = JSON.parse(localStorage.getItem('users') || '[]');
-            var userIndex = users.findIndex(u => u.id === customerId);
-            
-            if (userIndex !== -1) {
-                var user = users[userIndex];
-                
-                // Update user status to Cancelled
-                users[userIndex].status = 'Cancelled';
-                localStorage.setItem('users', JSON.stringify(users));
-                
-                // Add cancelled booking to bookings table
-                var bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-                var cancelledBooking = {
-                    id: 'B' + (bookings.length + 1).toString().padStart(3, '0'),
-                    userId: user.id,
-                    customerName: user.name,
-                    package: user.package,
-                    date: user.travelDate,
-                    people: user.people,
-                    amount: user.amount,
-                    status: 'Cancelled',
-                    payment: 'Refunded',
-                    notes: 'Customer rejected - ' + user.message
-                };
-                bookings.push(cancelledBooking);
-                localStorage.setItem('bookings', JSON.stringify(bookings));
-                
-                // Refresh dashboard
-                loadDashboard();
-                
-                alert('Customer ' + user.name + ' rejected and marked as cancelled.');
-            }
-        }
-        
-        // Booking Management Functions
-        function showAddBookingForm() {
-            document.getElementById('addBookingForm').className = '';
-        }
-        
-        function hideAddBookingForm() {
-            document.getElementById('addBookingForm').className = 'hidden';
-        }
-        
-        function loadUsersForBooking() {
-            var users = JSON.parse(localStorage.getItem('users') || '[]');
-            var select = document.getElementById('bookingUser');
-            
-            // Clear existing options
-            select.innerHTML = '<option value="">Select User</option>';
-            
-            for (var i = 0; i < users.length; i++) {
-                var option = document.createElement('option');
-                option.value = users[i].id;
-                option.textContent = users[i].name + ' (' + users[i].email + ')';
-                select.appendChild(option);
-            }
-        }
-        
-        function addBooking() {
-            var userId = document.getElementById('bookingUser').value;
-            var packageName = document.getElementById('bookingPackage').value;
-            var bookingDate = document.getElementById('bookingDate').value;
-            var bookingPeople = document.getElementById('bookingPeople').value;
-            var bookingStatus = document.getElementById('bookingStatus').value;
-            var bookingPayment = document.getElementById('bookingPayment').value;
-            var bookingNotes = document.getElementById('bookingNotes').value;
-            
-            if (!userId || !packageName || !bookingDate || !bookingPeople) {
-                alert('Please fill all required fields');
-                return;
-            }
-            
-            // Get user details
-            var users = JSON.parse(localStorage.getItem('users') || '[]');
-            var user = users.find(u => u.id === userId);
-            
-            if (!user) {
-                alert('Customer not found');
-                return;
-            }
-            
-            // Get package price
-            var packagePrices = {
-                'Kerala Backwaters': 2500,
-                'Rajasthan Heritage': 1800,
-                'Goa Beach': 3200,
-                'Taj Mahal Agra': 1500,
-                'Varanasi Spiritual': 2000,
-                'Leh Ladakh': 4500,
-                'Andaman Islands': 5000,
-                'Himalayan Trek': 3800,
-                'Golden Temple Amritsar': 1200,
-                'Mysore Palace': 1600
-            };
-            
-            var bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-            var newBooking = {
-                id: 'B' + (bookings.length + 1).toString().padStart(3, '0'),
-                userId: userId,
-                customerName: user.name,
-                package: packageName,
-                date: bookingDate,
-                people: parseInt(bookingPeople),
-                amount: packagePrices[packageName] * parseInt(bookingPeople),
-                status: bookingStatus,
-                payment: bookingPayment || 'Unpaid',
-                notes: bookingNotes
-            };
-            
-            bookings.push(newBooking);
-            localStorage.setItem('bookings', JSON.stringify(bookings));
-            
-            // Clear form
-            document.getElementById('bookingUser').value = '';
-            document.getElementById('bookingPackage').value = '';
-            document.getElementById('bookingDate').value = '';
-            document.getElementById('bookingPeople').value = '';
-            document.getElementById('bookingStatus').value = 'Confirmed';
-            document.getElementById('bookingPayment').value = '';
-            document.getElementById('bookingNotes').value = '';
-            
-            hideAddBookingForm();
-            loadBookings();
-            loadDashboard();
-        }
-        
-        function loadBookings() {
-            var bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-            var table = document.getElementById('bookingsTable');
-            var noBookings = document.getElementById('noBookingsList');
-            
-            // Update booking stats
-            var confirmed = bookings.filter(b => b.status === 'Confirmed').length;
-            var pending = bookings.filter(b => b.status === 'Pending').length;
-            var cancelled = bookings.filter(b => b.status === 'Cancelled').length;
-            
-            document.getElementById('confirmedCount').textContent = confirmed;
-            document.getElementById('pendingCount').textContent = pending;
-            document.getElementById('cancelledCount').textContent = cancelled;
-            
-            // Clear existing rows (except header)
-            var rows = table.rows;
-            for (var i = rows.length - 1; i > 0; i--) {
-                table.deleteRow(i);
-            }
-            
-            if (bookings.length === 0) {
-                table.style.display = 'none';
-                noBookings.style.display = 'block';
-            } else {
-                table.style.display = 'table';
-                noBookings.style.display = 'none';
-                
-                for (var i = 0; i < bookings.length; i++) {
-                    var booking = bookings[i];
-                    var row = table.insertRow();
-                    row.innerHTML = '<td>' + booking.id + '</td><td>' + booking.customerName + '</td><td>' + booking.package + '</td><td>' + booking.date + '</td><td>' + booking.people + '</td><td>₹' + booking.amount + '</td><td>' + booking.status + '</td><td>' + (booking.payment || 'Unpaid') + '</td><td><button class="btn" onclick="editBooking(\'' + booking.id + '\')">Edit</button> <button class="btn" onclick="deleteBooking(\'' + booking.id + '\')" style="background: #dc3545;">Delete</button></td>';
-                }
-            }
-        }
-        
-        function filterBookings() {
-            var filter = document.getElementById('bookingFilter').value;
-            var rows = document.querySelectorAll('#bookingsTable tr');
-            
-            for (var i = 1; i < rows.length; i++) {
-                var row = rows[i];
-                var status = row.cells[6].textContent.toLowerCase();
-                
-                if (filter === 'all' || status === filter) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            }
-        }
-        
-        function exportBookings() {
-            var bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-            
-            if (bookings.length === 0) {
-                alert('No bookings to export');
-                return;
-            }
-            
-            var csv = 'ID,Customer,Package,Date,People,Amount,Status,Payment\n';
-            
-            for (var i = 0; i < bookings.length; i++) {
-                var booking = bookings[i];
-                csv += booking.id + ',' + booking.customerName + ',' + booking.package + ',' + 
-                       booking.date + ',' + booking.people + ',' + booking.amount + ',' + 
-                       booking.status + ',' + (booking.payment || 'Unpaid') + '\n';
-            }
-            
-            // Create download link
-            var blob = new Blob([csv], { type: 'text/csv' });
-            var url = window.URL.createObjectURL(blob);
-            var a = document.createElement('a');
-            a.href = url;
-            a.download = 'bookings_' + new Date().toLocaleDateString() + '.csv';
-            a.click();
-            window.URL.revokeObjectURL(url);
-            
-            alert('Bookings exported successfully!');
-        }
-        
-        function editBooking(bookingId) {
-            var bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-            var bookingIndex = bookings.findIndex(b => b.id === bookingId);
-            
-            if (bookingIndex !== -1) {
-                var booking = bookings[bookingIndex];
-                var newStatus = prompt('Edit status (Confirmed/Pending/Cancelled):', booking.status);
-                if (newStatus && (newStatus === 'Confirmed' || newStatus === 'Pending' || newStatus === 'Cancelled')) {
-                    bookings[bookingIndex].status = newStatus;
-                    localStorage.setItem('bookings', JSON.stringify(bookings));
-                    loadBookings();
-                    loadDashboard();
-                }
-            }
-        }
-        
-        function deleteBooking(bookingId) {
-            if (confirm('Delete booking ' + bookingId + '?')) {
-                var bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-                bookings = bookings.filter(b => b.id !== bookingId);
-                localStorage.setItem('bookings', JSON.stringify(bookings));
-                loadBookings();
-                loadDashboard();
-            }
-        }
-        
-        // Load sample users on first visit
-        function loadSampleUsers() {
-            // Force reload sample data by clearing existing data
-            if (localStorage.getItem('users') && JSON.parse(localStorage.getItem('users')).length < 22) {
-                localStorage.removeItem('users');
-                localStorage.removeItem('bookings');
-            }
-            
-            var users = JSON.parse(localStorage.getItem('users') || '[]');
-            var bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-            
-            if (users.length === 0 || bookings.length < 14) { // Load if we don't have the full dataset
-                // Clear everything to ensure fresh load
-                localStorage.removeItem('users');
-                localStorage.removeItem('bookings');
-                // Add sample users from website inquiries
-                var sampleUsers = [
-                    {
-                        id: 'U001',
-                        name: "Rajesh Kumar",
-                        email: "rajesh.kumar@email.com",
-                        phone: "9876543210",
-                        package: "Kerala Backwaters",
-                        travelDate: "2024-03-15",
-                        people: 2,
-                        amount: 5000,
-                        status: "New Inquiry",
-                        message: "Looking for a peaceful backwater experience with houseboat stay",
-                        receivedDate: "2/20/2026, 10:30:00 AM"
-                    },
-                    {
-                        id: 'U002',
-                        name: "Priya Sharma",
-                        email: "priya.sharma@email.com",
-                        phone: "9123456789",
-                        package: "Rajasthan Heritage",
-                        travelDate: "2024-04-20",
-                        people: 4,
-                        amount: 7200,
-                        status: "Confirmed",
-                        message: "Family trip with children, need family-friendly accommodations",
-                        receivedDate: "2/20/2026, 11:15:00 AM"
-                    },
-                    {
-                        id: 'U003',
-                        name: "Amit Patel",
-                        email: "amit.patel@email.com",
-                        phone: "8765432109",
-                        package: "Goa Beach",
-                        travelDate: "2024-05-10",
-                        people: 3,
-                        amount: 9600,
-                        status: "Confirmed",
-                        message: "Beach vacation with water sports activities",
-                        receivedDate: "2/20/2026, 2:45:00 PM"
-                    },
-                    {
-                        id: 'U004',
-                        name: "Sneha Reddy",
-                        email: "sneha.reddy@email.com",
-                        phone: "7654321098",
-                        package: "Taj Mahal Agra",
-                        travelDate: "2024-03-25",
-                        people: 2,
-                        amount: 3000,
-                        status: "Contacted",
-                        message: "Romantic getaway for anniversary celebration",
-                        receivedDate: "2/21/2026, 9:20:00 AM"
-                    },
-                    {
-                        id: 'U005',
-                        name: "Vikram Singh",
-                        email: "vikram.singh@email.com",
-                        phone: "6543210987",
-                        package: "Leh Ladakh",
-                        travelDate: "2024-06-15",
-                        people: 6,
-                        amount: 27000,
-                        status: "New Inquiry",
-                        message: "Adventure trip with college friends, need trekking guide",
-                        receivedDate: "2/21/2026, 10:45:00 AM"
-                    },
-                    {
-                        id: 'U006',
-                        name: "Anjali Nair",
-                        email: "anjali.nair@email.com",
-                        phone: "5432109876",
-                        package: "Andaman Islands",
-                        travelDate: "2024-04-05",
-                        people: 2,
-                        amount: 10000,
-                        status: "Confirmed",
-                        message: "Honeymoon trip, need romantic beach resort",
-                        receivedDate: "2/21/2026, 11:30:00 AM"
-                    },
-                    {
-                        id: 'U007',
-                        name: "Rohit Verma",
-                        email: "rohit.verma@email.com",
-                        phone: "4321098765",
-                        package: "Himalayan Trek",
-                        travelDate: "2024-05-20",
-                        people: 4,
-                        amount: 15200,
-                        status: "Contacted",
-                        message: "Adventure trekking group, experienced climbers",
-                        receivedDate: "2/21/2026, 2:15:00 PM"
-                    },
-                    {
-                        id: 'U008',
-                        name: "Kavita Malhotra",
-                        email: "kavita.malhotra@email.com",
-                        phone: "3210987654",
-                        package: "Golden Temple Amritsar",
-                        travelDate: "2024-03-30",
-                        people: 3,
-                        amount: 3600,
-                        status: "Contacted",
-                        message: "Spiritual tour with elderly parents, need accessible accommodation",
-                        receivedDate: "2/21/2026, 3:45:00 PM"
-                    },
-                    {
-                        id: 'U009',
-                        name: "Arjun Gupta",
-                        email: "arjun.gupta@email.com",
-                        phone: "2109876543",
-                        package: "Varanasi Spiritual",
-                        travelDate: "2024-04-15",
-                        people: 2,
-                        amount: 4000,
-                        status: "New Inquiry",
-                        message: "Photography tour, interested in sunrise Ganga Aarti",
-                        receivedDate: "2/21/2026, 4:20:00 PM"
-                    },
-                    {
-                        id: 'U010',
-                        name: "Meera Iyer",
-                        email: "meera.iyer@email.com",
-                        phone: "1098765432",
-                        package: "Mysore Palace",
-                        travelDate: "2024-03-18",
-                        people: 5,
-                        amount: 8000,
-                        status: "Confirmed",
-                        message: "Family heritage tour, includes grandparents",
-                        receivedDate: "2/21/2026, 5:10:00 PM"
-                    },
-                    {
-                        id: 'U011',
-                        name: "Karan Thakur",
-                        email: "karan.thakur@email.com",
-                        phone: "9988776655",
-                        package: "Kerala Backwaters",
-                        travelDate: "2024-04-25",
-                        people: 3,
-                        amount: 7500,
-                        status: "New Inquiry",
-                        message: "Monsoon tourism experience, interested in Ayurvedic treatments",
-                        receivedDate: "2/21/2026, 6:30:00 PM"
-                    },
-                    {
-                        id: 'U012',
-                        name: "Divya Choudhary",
-                        email: "divya.choudhary@email.com",
-                        phone: "8877665544",
-                        package: "Goa Beach",
-                        travelDate: "2024-05-05",
-                        people: 2,
-                        amount: 6400,
-                        status: "Contacted",
-                        message: "Weekend beach party trip with friends",
-                        receivedDate: "2/21/2026, 7:45:00 PM"
-                    },
-                    {
-                        id: 'U013',
-                        name: "Rahul Mehra",
-                        email: "rahul.mehra@email.com",
-                        phone: "7755443322",
-                        package: "Rajasthan Heritage",
-                        travelDate: "2024-04-12",
-                        people: 6,
-                        amount: 10800,
-                        status: "Confirmed",
-                        message: "Corporate team outing, need conference facilities",
-                        receivedDate: "2/21/2026, 8:15:00 PM"
-                    },
-                    {
-                        id: 'U014',
-                        name: "Neha Joshi",
-                        email: "neha.joshi@email.com",
-                        phone: "6644332211",
-                        package: "Taj Mahal Agra",
-                        travelDate: "2024-03-28",
-                        people: 3,
-                        amount: 4500,
-                        status: "Contacted",
-                        message: "School educational trip, need student discounts",
-                        receivedDate: "2/21/2026, 9:30:00 PM"
-                    },
-                    {
-                        id: 'U015',
-                        name: "Sanjay Desai",
-                        email: "sanjay.desai@email.com",
-                        phone: "5533221100",
-                        package: "Leh Ladakh",
-                        travelDate: "2024-07-10",
-                        people: 2,
-                        amount: 9000,
-                        status: "New Inquiry",
-                        message: "Photography expedition, need mountain guide",
-                        receivedDate: "2/21/2026, 10:45:00 PM"
-                    },
-                    {
-                        id: 'U016',
-                        name: "Pooja Krishnan",
-                        email: "pooja.krishnan@email.com",
-                        phone: "4422110099",
-                        package: "Andaman Islands",
-                        travelDate: "2024-04-18",
-                        people: 4,
-                        amount: 20000,
-                        status: "Confirmed",
-                        message: "Family reunion trip, need multiple rooms",
-                        receivedDate: "2/22/2026, 8:00:00 AM"
-                    },
-                    {
-                        id: 'U017',
-                        name: "Mohammed Ali",
-                        email: "mohammed.ali@email.com",
-                        phone: "3311009988",
-                        package: "Himalayan Trek",
-                        travelDate: "2024-06-05",
-                        people: 5,
-                        amount: 19000,
-                        status: "Contacted",
-                        message: "Adventure club annual trek, experienced group",
-                        receivedDate: "2/22/2026, 9:15:00 AM"
-                    },
-                    {
-                        id: 'U018',
-                        name: "Anita Saxena",
-                        email: "anita.saxena@email.com",
-                        phone: "2200998877",
-                        package: "Golden Temple Amritsar",
-                        travelDate: "2024-04-08",
-                        people: 2,
-                        amount: 2400,
-                        status: "New Inquiry",
-                        message: "Spiritual retreat, need meditation sessions",
-                        receivedDate: "2/22/2026, 10:30:00 AM"
-                    },
-                    {
-                        id: 'U019',
-                        name: "Ravi Chandra",
-                        email: "ravi.chandra@email.com",
-                        phone: "1199887766",
-                        package: "Varanasi Spiritual",
-                        travelDate: "2024-05-18",
-                        people: 3,
-                        amount: 6000,
-                        status: "Confirmed",
-                        message: "Cultural tour with boat rides and temple visits",
-                        receivedDate: "2/22/2026, 11:45:00 AM"
-                    },
-                    {
-                        id: 'U020',
-                        name: "Swati Nanda",
-                        email: "swati.nanda@email.com",
-                        phone: "0099776655",
-                        package: "Mysore Palace",
-                        travelDate: "2024-04-22",
-                        people: 4,
-                        amount: 6400,
-                        status: "Contacted",
-                        message: "Architecture and history tour, need guide",
-                        receivedDate: "2/22/2026, 1:00:00 PM"
-                    },
-                    {
-                        id: 'U021',
-                        name: "Deepak Mishra",
-                        email: "deepak.mishra@email.com",
-                        phone: "9988776655",
-                        package: "Kerala Backwaters",
-                        travelDate: "2024-05-28",
-                        people: 2,
-                        amount: 5000,
-                        status: "New Inquiry",
-                        message: "Monsoon special package, interested in Ayurveda",
-                        receivedDate: "2/22/2026, 2:15:00 PM"
-                    },
-                    {
-                        id: 'U022',
-                        name: "Kavita Bhatia",
-                        email: "kavita.bhatia@email.com",
-                        phone: "8877665544",
-                        package: "Goa Beach",
-                        travelDate: "2024-04-15",
-                        people: 6,
-                        amount: 19200,
-                        status: "Confirmed",
-                        message: "Bachelor party weekend, need beach activities",
-                        receivedDate: "2/22/2026, 3:30:00 PM"
-                    }
-                ];
-                
-                localStorage.setItem('users', JSON.stringify(sampleUsers));
-                console.log('Loaded', sampleUsers.length, 'users');
-                
-                // Add bookings to bookings table (including cancelled ones)
-                var bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-                
-                // Add confirmed bookings
-                var confirmedBookings = sampleUsers.filter(u => u.status === 'Confirmed');
-                confirmedBookings.forEach(user => {
-                    bookings.push({
-                        id: 'B' + (bookings.length + 1).toString().padStart(3, '0'),
-                        userId: user.id,
-                        customerName: user.name,
-                        package: user.package,
-                        date: user.travelDate,
-                        people: user.people,
-                        amount: user.amount,
-                        status: 'Confirmed',
-                        payment: 'Paid',
-                        notes: user.message
-                    });
-                });
-                
-                // Add some cancelled bookings (from customers who cancelled after confirmation)
-                var cancelledBookings = [
-                    {
-                        id: 'B' + (bookings.length + 1).toString().padStart(3, '0'),
-                        userId: 'U023',
-                        customerName: "Rohit Sharma",
-                        package: "Kerala Backwaters",
-                        date: "2024-02-10",
-                        people: 2,
-                        amount: 5000,
-                        status: 'Cancelled',
-                        payment: 'Refunded',
-                        notes: 'Customer cancelled due to medical emergency'
-                    },
-                    {
-                        id: 'B' + (bookings.length + 1).toString().padStart(3, '0'),
-                        userId: 'U024',
-                        customerName: "Pooja Verma",
-                        package: "Goa Beach",
-                        date: "2024-02-15",
-                        people: 4,
-                        amount: 12800,
-                        status: 'Cancelled',
-                        payment: 'Partial Refund',
-                        notes: 'Cancelled due to weather conditions, 50% refund processed'
-                    },
-                    {
-                        id: 'B' + (bookings.length + 1).toString().padStart(3, '0'),
-                        userId: 'U025',
-                        customerName: "Amit Bansal",
-                        package: "Rajasthan Heritage",
-                        date: "2024-02-20",
-                        people: 3,
-                        amount: 5400,
-                        status: 'Cancelled',
-                        payment: 'Refunded',
-                        notes: 'Work commitment conflict, full refund processed'
-                    },
-                    {
-                        id: 'B' + (bookings.length + 1).toString().padStart(3, '0'),
-                        userId: 'U026',
-                        customerName: "Neha Gupta",
-                        package: "Taj Mahal Agra",
-                        date: "2024-02-25",
-                        people: 2,
-                        amount: 3000,
-                        status: 'Cancelled',
-                        payment: 'No Refund',
-                        notes: 'Cancelled after deadline, no refund as per policy'
-                    }
-                ];
-                
-                cancelledBookings.forEach(booking => {
-                    bookings.push(booking);
-                });
-                
-                // Add some pending bookings
-                var pendingBookings = [
-                    {
-                        id: 'B' + (bookings.length + 1).toString().padStart(3, '0'),
-                        userId: 'U027',
-                        customerName: "Karan Malhotra",
-                        package: "Leh Ladakh",
-                        date: "2024-07-20",
-                        people: 4,
-                        amount: 18000,
-                        status: 'Pending',
-                        payment: 'Partial',
-                        notes: 'Advance payment received, awaiting confirmation'
-                    },
-                    {
-                        id: 'B' + (bookings.length + 1).toString().padStart(3, '0'),
-                        userId: 'U028',
-                        customerName: "Anjali Singh",
-                        package: "Andaman Islands",
-                        date: "2024-05-15",
-                        people: 2,
-                        amount: 10000,
-                        status: 'Pending',
-                        payment: 'Unpaid',
-                        notes: 'Booking confirmed, payment pending'
-                    }
-                ];
-                
-                pendingBookings.forEach(booking => {
-                    bookings.push(booking);
-                });
-                
-                localStorage.setItem('bookings', JSON.stringify(bookings));
-                console.log('Loaded', bookings.length, 'bookings');
-            }
-        }
-        function confirmBooking(userId) {
-            var users = JSON.parse(localStorage.getItem('users') || '[]');
-            var userIndex = users.findIndex(u => u.id === userId);
-            
-            if (userIndex !== -1) {
-                var user = users[userIndex];
-                
-                // Update user status
-                users[userIndex].status = 'Confirmed';
-                localStorage.setItem('users', JSON.stringify(users));
-                
-                // Add to bookings
-                var bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-                var newBooking = {
-                    id: 'B' + (bookings.length + 1).toString().padStart(3, '0'),
-                    userId: userId,
-                    customerName: user.name,
-                    package: user.package,
-                    date: user.travelDate,
-                    people: user.people,
-                    amount: user.amount,
-                    status: 'Confirmed',
-                    payment: 'Paid',
-                    notes: user.message
-                };
-                bookings.push(newBooking);
-                localStorage.setItem('bookings', JSON.stringify(bookings));
-                
+            } else if (sectionId === 'users') {
                 loadUsers();
-                loadBookings();
-                loadDashboard();
-                
-                alert('Booking confirmed for ' + user.name + '!');
+            } else if (sectionId === 'dashboard' || sectionId === 'analytics') {
+                updateDashboardStats();
             }
         }
-        
-        function loadUsers() {
-            var users = JSON.parse(localStorage.getItem('users') || '[]');
-            var tableBody = document.getElementById('usersTableBody');
-            var noUsers = document.getElementById('noUsers');
-            var table = document.getElementById('usersTable');
+
+        // Update dashboard statistics
+        function updateDashboardStats() {
+            const totalPackages = packages.length;
+            const activePackages = packages.filter(p => p.status === 'Active').length;
+            const totalBookings = bookings.length;
+            const totalUsers = users.length;
             
-            // Update customer stats
-            var totalCustomers = users.length;
-            var newInquiries = users.filter(u => u.status === 'New Inquiry').length;
-            var converted = users.filter(u => u.status === 'Confirmed').length;
-            var thisMonth = users.filter(u => {
-                var receivedDate = new Date(u.receivedDate);
-                var currentDate = new Date();
-                return receivedDate.getMonth() === currentDate.getMonth() && 
-                       receivedDate.getFullYear() === currentDate.getFullYear();
-            }).length;
+            const revenue = bookings.reduce((sum, booking) => sum + (booking.amount || 0), 0);
+            const avgPrice = totalPackages > 0 ? Math.round(packages.reduce((sum, pkg) => sum + pkg.price, 0) / totalPackages) : 0;
             
-            document.getElementById('customerTotalCount').textContent = totalCustomers;
-            document.getElementById('newInquiryCount').textContent = newInquiries;
-            document.getElementById('convertedCount').textContent = converted;
-            document.getElementById('thisMonthCount').textContent = thisMonth;
+            document.getElementById('totalPackages').textContent = totalPackages;
+            document.getElementById('totalBookings').textContent = totalBookings;
+            document.getElementById('totalUsers').textContent = totalUsers;
+            document.getElementById('revenue').textContent = '₹' + revenue.toLocaleString('en-IN');
             
-            // Update showing count
-            document.getElementById('totalCount').textContent = totalCustomers;
-            document.getElementById('showingCount').textContent = totalCustomers;
-            
-            // Clear existing rows
-            tableBody.innerHTML = '';
-            
-            if (users.length === 0) {
-                table.style.display = 'none';
-                noUsers.style.display = 'block';
-            } else {
-                table.style.display = 'table';
-                noUsers.style.display = 'none';
-                
-                for (var i = 0; i < users.length; i++) {
-                    var user = users[i];
-                    var row = document.createElement('tr');
-                    row.style.cssText = 'border-bottom: 1px solid #e9ecef; transition: background-color 0.2s;';
-                    row.onmouseover = function() { this.style.backgroundColor = '#f8f9fa'; };
-                    row.onmouseout = function() { this.style.backgroundColor = 'white'; };
-                    
-                    var statusBadge = getStatusBadge(user.status);
-                    var amountFormatted = '₹' + user.amount.toLocaleString('en-IN');
-                    
-                    row.innerHTML = 
-                        '<td style="padding: 15px 12px; font-weight: 600; color: #495057;">' + user.id + '</td>' +
-                        '<td style="padding: 15px 12px; font-weight: 600; color: #212529;">' + user.name + '</td>' +
-                        '<td style="padding: 15px 12px; color: #6c757d; font-size: 14px;">' + user.email + '</td>' +
-                        '<td style="padding: 15px 12px; color: #6c757d; font-size: 14px;">' + user.phone + '</td>' +
-                        '<td style="padding: 15px 12px; color: #495057;">' + user.package + '</td>' +
-                        '<td style="padding: 15px 12px; color: #495057;">' + user.travelDate + '</td>' +
-                        '<td style="padding: 15px 12px; text-align: center; font-weight: 600; color: #495057;">' + user.people + '</td>' +
-                        '<td style="padding: 15px 12px; text-align: right; font-weight: 600; color: #28a745;">' + amountFormatted + '</td>' +
-                        '<td style="padding: 15px 12px; text-align: center;">' + statusBadge + '</td>' +
-                        '<td style="padding: 15px 12px; color: #6c757d; font-size: 13px;">' + user.receivedDate + '</td>' +
-                        '<td style="padding: 15px 12px; text-align: center;">' +
-                        '<button class="btn" onclick="editCustomer(\'' + user.id + '\')" style="background: #007bff; padding: 6px 12px; font-size: 12px; margin-right: 5px;">✏️ Edit</button>' +
-                        '<button class="btn" onclick="confirmBooking(\'' + user.id + '\')" style="background: #28a745; padding: 6px 12px; font-size: 12px; margin-right: 5px;">✅ Confirm</button>' +
-                        '<button class="btn" onclick="deleteUser(\'' + user.id + '\')" style="background: #dc3545; padding: 6px 12px; font-size: 12px;">🗑️ Delete</button>' +
-                        '</td>';
-                    
-                    tableBody.appendChild(row);
-                }
-            }
+            document.getElementById('activePackages').textContent = activePackages;
+            document.getElementById('avgPackagePrice').textContent = '₹' + avgPrice.toLocaleString('en-IN');
+            document.getElementById('conversionRate').textContent = totalUsers > 0 ? Math.round((totalBookings / totalUsers) * 100) + '%' : '0%';
         }
-        
-        function getStatusBadge(status) {
-            var colors = {
-                'New Inquiry': { bg: '#9c27b0', color: 'white', icon: '🟣' },
-                'Contacted': { bg: '#ff9800', color: 'white', icon: '🟠' },
-                'Confirmed': { bg: '#4caf50', color: 'white', icon: '🟢' }
-            };
-            var style = colors[status] || { bg: '#666', color: 'white', icon: '⚪' };
-            return '<span style="display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: ' + style.bg + '; color: ' + style.color + '; white-space: nowrap;">' + style.icon + ' ' + status + '</span>';
+
+        // Load packages
+        function loadPackages() {
+            const tbody = document.getElementById('packagesTableBody');
+            tbody.innerHTML = '';
+            
+            packages.forEach(pkg => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${pkg.id}</td>
+                    <td>${pkg.name}</td>
+                    <td>${pkg.category}</td>
+                    <td>₹${pkg.price.toLocaleString('en-IN')}</td>
+                    <td>${pkg.duration}</td>
+                    <td><span class="status-badge status-${pkg.status.toLowerCase()}">${pkg.status}</span></td>
+                    <td>
+                        <button class="btn btn-sm" onclick="editPackage(${pkg.id})">Edit</button>
+                        <button class="btn btn-sm btn-danger" onclick="togglePackageStatus(${pkg.id})">${pkg.status === 'Active' ? 'Deactivate' : 'Activate'}</button>
+                    </td>
+                `;
+            });
         }
-        
-        function getStatusColor(status) {
-            switch(status) {
-                case 'New Inquiry': return '#9c27b0';
-                case 'Contacted': return '#ff9800';
-                case 'Confirmed': return '#4caf50';
-                default: return '#666';
-            }
-        }
-        
-        function searchCustomers() {
-            var search = document.getElementById('customerSearch').value.toLowerCase();
-            var rows = document.querySelectorAll('#usersTableBody tr');
-            var visibleCount = 0;
-            
-            for (var i = 0; i < rows.length; i++) {
-                var row = rows[i];
-                var text = row.textContent.toLowerCase();
-                
-                if (text.includes(search) || search === '') {
-                    row.style.display = '';
-                    visibleCount++;
-                } else {
-                    row.style.display = 'none';
-                }
-            }
-            
-            // Update showing count
-            document.getElementById('showingCount').textContent = visibleCount;
-        }
-        
-        function filterCustomers() {
-            var statusFilter = document.getElementById('statusFilter').value;
-            var packageFilter = document.getElementById('packageFilter').value;
-            var rows = document.querySelectorAll('#usersTableBody tr');
-            var visibleCount = 0;
-            
-            for (var i = 0; i < rows.length; i++) {
-                var row = rows[i];
-                var statusCell = row.cells[8].textContent.trim();
-                var packageCell = row.cells[4].textContent.trim();
-                
-                // Extract status text from badge (remove emoji and extra spaces)
-                var statusMatch = statusFilter === 'all' || statusCell.includes(statusFilter.replace(/[^\w\s]/gi, '').trim());
-                var packageMatch = packageFilter === 'all' || packageCell === packageFilter;
-                
-                if (statusMatch && packageMatch) {
-                    row.style.display = '';
-                    visibleCount++;
-                } else {
-                    row.style.display = 'none';
-                }
-            }
-            
-            // Update showing count
-            document.getElementById('showingCount').textContent = visibleCount;
-        }
-        
-        function exportCustomers() {
-            var users = JSON.parse(localStorage.getItem('users') || '[]');
-            
-            if (users.length === 0) {
-                alert('No customers to export');
-                return;
-            }
-            
-            var csv = 'ID,Name,Email,Phone,Package,Travel Date,People,Amount,Status,Received Date,Message\n';
-            
-            for (var i = 0; i < users.length; i++) {
-                var user = users[i];
-                csv += user.id + ',' + user.name + ',' + user.email + ',' + user.phone + ',' + 
-                       user.package + ',' + user.travelDate + ',' + user.people + ',' + 
-                       user.amount + ',' + user.status + ',' + user.receivedDate + ',' + 
-                       '"' + user.message + '"\n';
-            }
-            
-            // Create download link
-            var blob = new Blob([csv], { type: 'text/csv' });
-            var url = window.URL.createObjectURL(blob);
-            var a = document.createElement('a');
-            a.href = url;
-            a.download = 'customers_' + new Date().toLocaleDateString() + '.csv';
-            a.click();
-            window.URL.revokeObjectURL(url);
-            
-            alert('Customers exported successfully!');
-        }
-        
-        function editCustomer(userId) {
-            var users = JSON.parse(localStorage.getItem('users') || '[]');
-            var userIndex = users.findIndex(u => u.id === userId);
-            
-            if (userIndex !== -1) {
-                var user = users[userIndex];
-                var newStatus = prompt('Edit status (New Inquiry/Contacted/Confirmed):', user.status);
-                if (newStatus && (newStatus === 'New Inquiry' || newStatus === 'Contacted' || newStatus === 'Confirmed')) {
-                    users[userIndex].status = newStatus;
-                    localStorage.setItem('users', JSON.stringify(users));
-                    loadUsers();
-                    loadDashboard();
-                }
-            }
-        }
-        
-        function confirmBooking(userId) {
-            var users = JSON.parse(localStorage.getItem('users') || '[]');
-            var userIndex = users.findIndex(u => u.id === userId);
-            
-            if (userIndex !== -1) {
-                var user = users[userIndex];
-                
-                // Update user status
-                users[userIndex].status = 'Confirmed';
-                localStorage.setItem('users', JSON.stringify(users));
-                
-                // Add to bookings
-                var bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-                var newBooking = {
-                    id: 'B' + (bookings.length + 1).toString().padStart(3, '0'),
-                    userId: userId,
-                    customerName: user.name,
-                    package: user.package,
-                    date: user.travelDate,
-                    people: user.people,
-                    amount: user.amount,
-                    status: 'Confirmed',
-                    notes: user.message
-                };
-                bookings.push(newBooking);
-                localStorage.setItem('bookings', JSON.stringify(bookings));
-                
-                loadUsers();
-                loadBookings();
-                loadDashboard();
-                
-                alert('Booking confirmed for ' + user.name + '!');
-            }
-        }
-        
-        function editUser(userId) {
-            var users = JSON.parse(localStorage.getItem('users') || '[]');
-            var userIndex = users.findIndex(u => u.id === userId);
-            
-            if (userIndex !== -1) {
-                var user = users[userIndex];
-                var newStatus = prompt('Edit status (New Lead/Contacted/Booked):', user.status);
-                if (newStatus && (newStatus === 'New Lead' || newStatus === 'Contacted' || newStatus === 'Booked')) {
-                    users[userIndex].status = newStatus;
-                    localStorage.setItem('users', JSON.stringify(users));
-                    loadUsers();
-                }
-            }
-        }
-        
-        function deleteUser(userId) {
-            if (confirm('Delete user ' + userId + '?')) {
-                var users = JSON.parse(localStorage.getItem('users') || '[]');
-                users = users.filter(u => u.id !== userId);
-                localStorage.setItem('users', JSON.stringify(users));
-                loadUsers();
-            }
-        }
-        
-        function searchUsers() {
-            var search = document.getElementById('userSearch').value.toLowerCase();
-            var rows = document.querySelectorAll('#usersTable tr');
-            
-            for (var i = 1; i < rows.length; i++) {
-                var row = rows[i];
-                var text = row.textContent.toLowerCase();
-                
-                if (text.includes(search) || search === '') {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            }
-        }
-        
-        // Settings Functions
-        function loadSettings() {
-            var settings = JSON.parse(localStorage.getItem('adminSettings') || '{}');
-            
-            // Load profile settings
-            document.getElementById('adminName').value = settings.adminName || 'Admin';
-            document.getElementById('adminEmail').value = settings.adminEmail || 'admin@travelasha.com';
-            document.getElementById('adminPhone').value = settings.adminPhone || '+91-9876543210';
-            
-            // Load business settings
-            document.getElementById('companyName').value = settings.companyName || 'Travelasha Tours';
-            document.getElementById('currency').value = settings.currency || '₹';
-            document.getElementById('taxRate').value = settings.taxRate || '5';
-        }
-        
-        function saveProfile() {
-            var settings = JSON.parse(localStorage.getItem('adminSettings') || '{}');
-            
-            settings.adminName = document.getElementById('adminName').value;
-            settings.adminEmail = document.getElementById('adminEmail').value;
-            settings.adminPhone = document.getElementById('adminPhone').value;
-            
-            localStorage.setItem('adminSettings', JSON.stringify(settings));
-            alert('Profile settings saved successfully!');
-        }
-        
-        function saveBusinessSettings() {
-            var settings = JSON.parse(localStorage.getItem('adminSettings') || '{}');
-            
-            settings.companyName = document.getElementById('companyName').value;
-            settings.currency = document.getElementById('currency').value;
-            settings.taxRate = document.getElementById('taxRate').value;
-            settings.businessEmail = document.getElementById('businessEmail').value;
-            settings.businessPhone = document.getElementById('businessPhone').value;
-            
-            localStorage.setItem('adminSettings', JSON.stringify(settings));
-            alert('Business settings saved successfully!');
-        }
-        
-        function saveNotificationSettings() {
-            var settings = JSON.parse(localStorage.getItem('adminSettings') || '{}');
-            
-            settings.emailNotifications = document.getElementById('emailNotifications').checked;
-            settings.smsNotifications = document.getElementById('smsNotifications').checked;
-            settings.dailyReports = document.getElementById('dailyReports').checked;
-            settings.monthlyReports = document.getElementById('monthlyReports').checked;
-            
-            localStorage.setItem('adminSettings', JSON.stringify(settings));
-            alert('Notification settings saved successfully!');
-        }
-        
-        function saveSystemSettings() {
-            var settings = JSON.parse(localStorage.getItem('adminSettings') || '{}');
-            
-            settings.defaultStatus = document.getElementById('defaultStatus').value;
-            settings.backupFrequency = document.getElementById('backupFrequency').value;
-            settings.autoDeleteOld = document.getElementById('autoDeleteOld').checked;
-            settings.maintenanceMode = document.getElementById('maintenanceMode').checked;
-            
-            localStorage.setItem('adminSettings', JSON.stringify(settings));
-            alert('System settings saved successfully!');
-        }
-        
-        function updateSystemInfo() {
-            var users = JSON.parse(localStorage.getItem('users') || '[]');
-            var bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-            
-            document.getElementById('totalCustomersInfo').textContent = users.length;
-            document.getElementById('totalBookingsInfo').textContent = bookings.length;
-            
-            var revenue = 0;
-            for (var i = 0; i < bookings.length; i++) {
-                revenue += bookings[i].amount;
-            }
-            document.getElementById('totalRevenueInfo').textContent = '₹' + revenue;
-            
-            // Calculate storage used (rough estimate)
-            var storageSize = (JSON.stringify(users).length + JSON.stringify(bookings).length) * 2; // bytes
-            var storageKB = (storageSize / 1024).toFixed(2);
-            document.getElementById('storageUsed').textContent = storageKB + ' KB';
-            
-            // Get last backup date
-            var lastBackup = localStorage.getItem('lastBackup') || 'Never';
-            document.getElementById('lastBackup').textContent = lastBackup;
-        }
-        
-        function backupData() {
-            var backupData = {
-                users: JSON.parse(localStorage.getItem('users') || '[]'),
-                bookings: JSON.parse(localStorage.getItem('bookings') || '[]'),
-                settings: JSON.parse(localStorage.getItem('adminSettings') || '{}'),
-                backupDate: new Date().toISOString()
-            };
-            
-            var dataStr = JSON.stringify(backupData, null, 2);
-            var dataBlob = new Blob([dataStr], {type: 'application/json'});
-            var url = URL.createObjectURL(dataBlob);
-            var link = document.createElement('a');
-            link.href = url;
-            link.download = 'travelasha_backup_' + new Date().toLocaleDateString() + '.json';
-            link.click();
-            URL.revokeObjectURL(url);
-            
-            // Update last backup date
-            localStorage.setItem('lastBackup', new Date().toLocaleString());
-            updateSystemInfo();
-            
-            alert('Data backed up successfully!');
-        }
-        
-        function restoreData(event) {
-            var file = event.target.files[0];
-            if (!file) return;
-            
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    var backupData = JSON.parse(e.target.result);
-                    
-                    if (confirm('This will replace all current data. Are you sure?')) {
-                        localStorage.setItem('users', JSON.stringify(backupData.users || []));
-                        localStorage.setItem('bookings', JSON.stringify(backupData.bookings || []));
-                        localStorage.setItem('adminSettings', JSON.stringify(backupData.settings || {}));
-                        
-                        alert('Data restored successfully! Please refresh the page.');
-                        setTimeout(() => location.reload(), 1000);
-                    }
-                } catch (error) {
-                    alert('Invalid backup file!');
-                }
-            };
-            reader.readAsText(file);
-        }
-        
-        function exportAllData() {
-            var allData = {
-                users: JSON.parse(localStorage.getItem('users') || '[]'),
-                bookings: JSON.parse(localStorage.getItem('bookings') || '[]'),
-                settings: JSON.parse(localStorage.getItem('adminSettings') || '{}'),
-                exportDate: new Date().toISOString()
-            };
-            
-            var dataStr = JSON.stringify(allData, null, 2);
-            var dataBlob = new Blob([dataStr], {type: 'application/json'});
-            var url = URL.createObjectURL(dataBlob);
-            var link = document.createElement('a');
-            link.href = url;
-            link.download = 'travelasha_export_' + new Date().toLocaleDateString() + '.json';
-            link.click();
-            URL.revokeObjectURL(url);
-            
-            alert('All data exported successfully!');
-        }
-        
-        function clearAllData() {
-            if (confirm('⚠️ WARNING: This will permanently delete ALL data including users, bookings, and settings. This action cannot be undone!\n\nType "DELETE" to confirm:')) {
-                var confirmation = prompt('Type "DELETE" to confirm permanent data deletion:');
-                if (confirmation === 'DELETE') {
-                    localStorage.removeItem('users');
-                    localStorage.removeItem('bookings');
-                    localStorage.removeItem('adminSettings');
-                    localStorage.removeItem('lastBackup');
-                    
-                    alert('All data has been permanently deleted. The page will now reload.');
-                    setTimeout(() => location.reload(), 1000);
-                } else {
-                    alert('Data deletion cancelled.');
-                }
-            }
-        }
-        
-        // Package Management Functions
+
+        // Show add package form
         function showAddPackageForm() {
+            document.getElementById('addPackageForm').style.display = 'block';
             document.getElementById('packageFormTitle').textContent = 'Add New Package';
             document.getElementById('editingPackageId').value = '';
-            hidePackageForm(); // Clear form first
-            document.getElementById('addPackageForm').className = '';
-        }
-        
-        function hidePackageForm() {
-            document.getElementById('addPackageForm').className = 'hidden';
-            // Clear form
             document.getElementById('packageName').value = '';
             document.getElementById('packagePrice').value = '';
             document.getElementById('packageDuration').value = '';
             document.getElementById('packageCategory').value = '';
-            document.getElementById('packageDifficulty').value = 'Easy';
-            document.getElementById('packageSeason').value = 'All Year';
+            document.getElementById('packageDifficulty').value = '';
             document.getElementById('packageDescription').value = '';
-            
-            // Clear multi-select checkboxes
-            var inclusionsCheckboxes = document.querySelectorAll('input[type="checkbox"][value*=""]');
-            var exclusionsCheckboxes = document.querySelectorAll('input[type="checkbox"][value*=""]');
-            
-            // Clear all checkboxes
-            for (var i = 0; i < inclusionsCheckboxes.length; i++) {
-                inclusionsCheckboxes[i].checked = false;
-            }
-            for (var i = 0; i < exclusionsCheckboxes.length; i++) {
-                exclusionsCheckboxes[i].checked = false;
-            }
-            
-            document.getElementById('packageMinPeople').value = '2';
-            document.getElementById('packageMaxPeople').value = '20';
-            document.getElementById('packageTransport').value = 'Bus';
-            document.getElementById('packageAccommodation').value = 'Budget';
-            document.getElementById('editingPackageId').value = '';
         }
-        
-        function savePackage() {
-            var name = document.getElementById('packageName').value.trim();
-            var price = document.getElementById('packagePrice').value.trim();
-            var duration = document.getElementById('packageDuration').value;
-            var category = document.getElementById('packageCategory').value;
-            var description = document.getElementById('packageDescription').value.trim();
-            var editingId = document.getElementById('editingPackageId').value;
+
+        // Hide add package form
+        function hideAddPackageForm() {
+            document.getElementById('addPackageForm').style.display = 'none';
+        }
+
+        // Save package
+        function savePackage(event) {
+            event.preventDefault();
             
-            // Get selected inclusions from checkboxes
-            var inclusionsCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked');
-            var selectedInclusions = [];
-            for (var i = 0; i < inclusionsCheckboxes.length; i++) {
-                var checkbox = inclusionsCheckboxes[i];
-                var label = checkbox.parentElement;
-                if (label.textContent.trim() !== '') {
-                    selectedInclusions.push(checkbox.value);
-                }
-            }
-            
-            // Get selected exclusions from checkboxes
-            var exclusionsCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked');
-            var selectedExclusions = [];
-            for (var i = 0; i < exclusionsCheckboxes.length; i++) {
-                var checkbox = exclusionsCheckboxes[i];
-                var label = checkbox.parentElement;
-                if (label.textContent.trim() !== '') {
-                    selectedExclusions.push(checkbox.value);
-                }
-            }
-            
-            // Validation
-            if (!name || !price || !duration || !category || !description) {
-                alert('Please fill all required fields marked with *');
-                return;
-            }
-            
-            var packages = JSON.parse(localStorage.getItem('packages') || '[]');
+            const editingId = document.getElementById('editingPackageId').value;
+            const packageData = {
+                name: document.getElementById('packageName').value,
+                price: parseInt(document.getElementById('packagePrice').value),
+                duration: document.getElementById('packageDuration').value,
+                category: document.getElementById('packageCategory').value,
+                difficulty: document.getElementById('packageDifficulty').value,
+                description: document.getElementById('packageDescription').value,
+                status: 'Active'
+            };
             
             if (editingId) {
-                // Update existing package
-                var pkgIndex = packages.findIndex(p => p.id === editingId);
-                if (pkgIndex !== -1) {
-                    packages[pkgIndex] = {
-                        id: editingId,
-                        name: name,
-                        price: parseInt(price),
-                        duration: duration,
-                        category: category,
-                        difficulty: document.getElementById('packageDifficulty').value,
-                        season: document.getElementById('packageSeason').value,
-                        description: description,
-                        inclusions: selectedInclusions.join(', '),
-                        exclusions: selectedExclusions.join(', '),
-                        minPeople: parseInt(document.getElementById('packageMinPeople').value),
-                        maxPeople: parseInt(document.getElementById('packageMaxPeople').value),
-                        transport: document.getElementById('packageTransport').value,
-                        accommodation: document.getElementById('packageAccommodation').value,
-                        status: packages[pkgIndex].status,
-                        createdDate: packages[pkgIndex].createdDate,
-                        updatedDate: new Date().toLocaleString()
-                    };
-                    
-                    localStorage.setItem('packages', JSON.stringify(packages));
-                    hidePackageForm();
-                    loadPackages();
-                    alert('Package "' + name + '" updated successfully!');
+                // Edit existing package
+                const index = packages.findIndex(p => p.id == editingId);
+                if (index !== -1) {
+                    packages[index] = { ...packages[index], ...packageData };
                 }
             } else {
                 // Add new package
-                var newId = 'P' + (packages.length + 1).toString().padStart(3, '0');
-                
-                var newPackage = {
-                    id: newId,
-                    name: name,
-                    price: parseInt(price),
-                    duration: duration,
-                    category: category,
-                    difficulty: document.getElementById('packageDifficulty').value,
-                    season: document.getElementById('packageSeason').value,
-                    description: description,
-                    inclusions: selectedInclusions.join(', '),
-                    exclusions: selectedExclusions.join(', '),
-                    minPeople: parseInt(document.getElementById('packageMinPeople').value),
-                    maxPeople: parseInt(document.getElementById('packageMaxPeople').value),
-                    transport: document.getElementById('packageTransport').value,
-                    accommodation: document.getElementById('packageAccommodation').value,
-                    status: 'Active',
-                    createdDate: new Date().toLocaleString()
-                };
-                
-                packages.push(newPackage);
-                localStorage.setItem('packages', JSON.stringify(packages));
-                
-                hidePackageForm();
-                loadPackages();
-                alert('Package "' + name + '" added successfully!');
+                const newId = packages.length > 0 ? Math.max(...packages.map(p => p.id)) + 1 : 1;
+                packages.push({ id: newId, ...packageData });
             }
-        }
-        
-        function editPackage(packageId) {
-            var packages = JSON.parse(localStorage.getItem('packages') || '[]');
-            var pkg = packages.find(p => p.id === packageId);
             
+            localStorage.setItem('packages', JSON.stringify(packages));
+            loadPackages();
+            hideAddPackageForm();
+            updateDashboardStats();
+            alert(editingId ? 'Package updated successfully!' : 'Package added successfully!');
+        }
+
+        // Edit package
+        function editPackage(packageId) {
+            const pkg = packages.find(p => p.id === packageId);
             if (pkg) {
-                // Set form title
+                document.getElementById('addPackageForm').style.display = 'block';
                 document.getElementById('packageFormTitle').textContent = 'Edit Package';
                 document.getElementById('editingPackageId').value = packageId;
-                
-                // Fill form with package data
                 document.getElementById('packageName').value = pkg.name;
                 document.getElementById('packagePrice').value = pkg.price;
                 document.getElementById('packageDuration').value = pkg.duration;
                 document.getElementById('packageCategory').value = pkg.category;
                 document.getElementById('packageDifficulty').value = pkg.difficulty;
-                document.getElementById('packageSeason').value = pkg.season;
                 document.getElementById('packageDescription').value = pkg.description;
-                document.getElementById('packageInclusions').value = pkg.inclusions;
-                document.getElementById('packageExclusions').value = pkg.exclusions;
-                document.getElementById('packageMinPeople').value = pkg.minPeople;
-                document.getElementById('packageMaxPeople').value = pkg.maxPeople;
-                document.getElementById('packageTransport').value = pkg.transport;
-                document.getElementById('packageAccommodation').value = pkg.accommodation;
-                
-                // Show form
-                document.getElementById('addPackageForm').className = '';
             }
         }
-        
-        function loadPackages() {
-            var packages = JSON.parse(localStorage.getItem('packages') || '[]');
-            
-            // Load default packages if empty
-            if (packages.length === 0) {
-                packages = [
-                    {
-                        id: 'P001',
-                        name: 'Kerala Backwaters',
-                        price: 2500,
-                        duration: '3 Days',
-                        category: 'Beach',
-                        difficulty: 'Easy',
-                        season: 'Winter',
-                        description: 'Experience the serene backwaters of Kerala with houseboat stays and authentic cuisine.',
-                        inclusions: 'Accommodation, Meals, Transport, Guide',
-                        exclusions: 'Personal expenses, Insurance',
-                        minPeople: 2,
-                        maxPeople: 10,
-                        transport: 'Car',
-                        accommodation: 'Standard',
-                        status: 'Active',
-                        createdDate: '2/20/2026, 10:00:00 AM'
-                    },
-                    {
-                        id: 'P002',
-                        name: 'Rajasthan Heritage',
-                        price: 1800,
-                        duration: '4 Days',
-                        category: 'Heritage',
-                        difficulty: 'Moderate',
-                        season: 'Winter',
-                        description: 'Explore the royal heritage of Rajasthan with palace visits and cultural shows.',
-                        inclusions: 'Accommodation, Meals, Transport, Guide, Entry Fees',
-                        exclusions: 'Personal expenses, Tips',
-                        minPeople: 2,
-                        maxPeople: 15,
-                        transport: 'Bus',
-                        accommodation: 'Budget',
-                        status: 'Active',
-                        createdDate: '2/20/2026, 10:00:00 AM'
-                    },
-                    {
-                        id: 'P003',
-                        name: 'Goa Beach',
-                        price: 3200,
-                        duration: '3 Days',
-                        category: 'Beach',
-                        difficulty: 'Easy',
-                        season: 'Winter',
-                        description: 'Enjoy the beautiful beaches of Goa with water sports and beach parties.',
-                        inclusions: 'Accommodation, Breakfast, Transport',
-                        exclusions: 'Lunch, Dinner, Water Sports',
-                        minPeople: 2,
-                        maxPeople: 12,
-                        transport: 'Car',
-                        accommodation: 'Deluxe',
-                        status: 'Active',
-                        createdDate: '2/20/2026, 10:00:00 AM'
-                    },
-                    {
-                        id: 'P004',
-                        name: 'Taj Mahal Agra',
-                        price: 1500,
-                        duration: '2 Days',
-                        category: 'Heritage',
-                        difficulty: 'Easy',
-                        season: 'All Year',
-                        description: 'Witness the magnificent Taj Mahal and explore the historical city of Agra.',
-                        inclusions: 'Transport, Guide, Entry Fees',
-                        exclusions: 'Accommodation, Meals',
-                        minPeople: 1,
-                        maxPeople: 8,
-                        transport: 'Train',
-                        accommodation: 'Budget',
-                        status: 'Active',
-                        createdDate: '2/20/2026, 10:00:00 AM'
-                    },
-                    {
-                        id: 'P005',
-                        name: 'Varanasi Spiritual',
-                        price: 2000,
-                        duration: '3 Days',
-                        category: 'Pilgrimage',
-                        difficulty: 'Easy',
-                        season: 'All Year',
-                        description: 'Experience the spiritual essence of Varanasi with Ganga Aarti and temple visits.',
-                        inclusions: 'Accommodation, Meals, Transport, Guide',
-                        exclusions: 'Personal expenses, Donations',
-                        minPeople: 2,
-                        maxPeople: 10,
-                        transport: 'Car',
-                        accommodation: 'Standard',
-                        status: 'Active',
-                        createdDate: '2/20/2026, 10:00:00 AM'
-                    },
-                    {
-                        id: 'P006',
-                        name: 'Leh Ladakh',
-                        price: 4500,
-                        duration: '7 Days',
-                        category: 'Hill Station',
-                        difficulty: 'Difficult',
-                        season: 'Summer',
-                        description: 'Adventure in the Himalayas with stunning landscapes and Buddhist monasteries.',
-                        inclusions: 'Accommodation, Meals, Transport, Guide, Permits',
-                        exclusions: 'Personal expenses, Insurance',
-                        minPeople: 4,
-                        maxPeople: 12,
-                        transport: 'Mixed',
-                        accommodation: 'Standard',
-                        status: 'Active',
-                        createdDate: '2/20/2026, 10:00:00 AM'
-                    },
-                    {
-                        id: 'P007',
-                        name: 'Andaman Islands',
-                        price: 5000,
-                        duration: '5 Days',
-                        category: 'Beach',
-                        difficulty: 'Moderate',
-                        season: 'Winter',
-                        description: 'Explore pristine beaches and coral reefs in the beautiful Andaman Islands.',
-                        inclusions: 'Accommodation, Meals, Transport, Water Sports',
-                        exclusions: 'Personal expenses, Insurance',
-                        minPeople: 2,
-                        maxPeople: 8,
-                        transport: 'Flight',
-                        accommodation: 'Deluxe',
-                        status: 'Active',
-                        createdDate: '2/20/2026, 10:00:00 AM'
-                    },
-                    {
-                        id: 'P008',
-                        name: 'Himalayan Trek',
-                        price: 3800,
-                        duration: '6 Days',
-                        category: 'Adventure',
-                        difficulty: 'Difficult',
-                        season: 'Spring',
-                        description: 'Challenging trek through the Himalayas with breathtaking mountain views.',
-                        inclusions: 'Accommodation, Meals, Transport, Guide, Equipment',
-                        exclusions: 'Personal expenses, Insurance',
-                        minPeople: 4,
-                        maxPeople: 10,
-                        transport: 'Mixed',
-                        accommodation: 'Budget',
-                        status: 'Active',
-                        createdDate: '2/20/2026, 10:00:00 AM'
-                    },
-                    {
-                        id: 'P009',
-                        name: 'Golden Temple Amritsar',
-                        price: 1200,
-                        duration: '2 Days',
-                        category: 'Pilgrimage',
-                        difficulty: 'Easy',
-                        season: 'All Year',
-                        description: 'Visit the sacred Golden Temple and experience Sikh culture and cuisine.',
-                        inclusions: 'Accommodation, Meals, Transport, Guide',
-                        exclusions: 'Personal expenses, Donations',
-                        minPeople: 2,
-                        maxPeople: 12,
-                        transport: 'Car',
-                        accommodation: 'Budget',
-                        status: 'Active',
-                        createdDate: '2/20/2026, 10:00:00 AM'
-                    },
-                    {
-                        id: 'P010',
-                        name: 'Mysore Palace',
-                        price: 1600,
-                        duration: '3 Days',
-                        category: 'Heritage',
-                        difficulty: 'Easy',
-                        season: 'Winter',
-                        description: 'Explore the magnificent Mysore Palace and the cultural heritage of Karnataka.',
-                        inclusions: 'Accommodation, Meals, Transport, Guide, Entry Fees',
-                        exclusions: 'Personal expenses, Tips',
-                        minPeople: 2,
-                        maxPeople: 10,
-                        transport: 'Car',
-                        accommodation: 'Standard',
-                        status: 'Active',
-                        createdDate: '2/20/2026, 10:00:00 AM'
-                    }
-                ];
-                localStorage.setItem('packages', JSON.stringify(packages));
-            }
-            
-            var table = document.getElementById('packagesTable');
-            
-            // Clear existing rows (except header)
-            var rows = table.rows;
-            for (var i = rows.length - 1; i > 0; i--) {
-                table.deleteRow(i);
-            }
-            
-            // Add packages to table
-            for (var i = 0; i < packages.length; i++) {
-                var pkg = packages[i];
-                var row = table.insertRow();
-                
-                var statusColor = pkg.status === 'Active' ? '#28a745' : '#dc3545';
-                
-                row.innerHTML = '<td>' + pkg.id + '</td><td>' + pkg.name + '</td><td>' + pkg.category + '</td><td>' + pkg.duration + '</td><td>₹' + pkg.price.toLocaleString('en-IN') + '</td><td><span style="padding: 2px 8px; border-radius: 3px; font-size: 12px; background: ' + statusColor + '; color: white;">' + pkg.status + '</span></td><td><button class="btn" onclick="editPackage(\'' + pkg.id + '\')" style="background: #007bff; padding: 4px 8px; font-size: 12px; margin-right: 5px;">✏️ Edit</button> <button class="btn" onclick="togglePackageStatus(\'' + pkg.id + '\')" style="background: ' + (pkg.status === 'Active' ? '#dc3545' : '#28a745') + '; padding: 4px 8px; font-size: 12px;">' + (pkg.status === 'Active' ? '❌ Deactivate' : '✅ Activate') + '</button></td>';
-            }
-            
-            // Update statistics
-            updatePackageStatistics(packages);
-        }
-        
-        function updatePackageStatistics(packages) {
-            var totalPackages = packages.length;
-            var activePackages = packages.filter(p => p.status === 'Active').length;
-            var avgPrice = 0;
-            
-            if (packages.length > 0) {
-                var totalPrice = packages.reduce((sum, pkg) => sum + pkg.price, 0);
-                avgPrice = Math.round(totalPrice / packages.length);
-            }
-            
-            document.getElementById('totalPackagesCount').textContent = totalPackages;
-            document.getElementById('activePackagesCount').textContent = activePackages;
-            document.getElementById('avgPackagePrice').textContent = '₹' + avgPrice.toLocaleString('en-IN');
-        }
-        
-        function searchPackages() {
-            var search = document.getElementById('packageSearch').value.toLowerCase();
-            var rows = document.querySelectorAll('#packagesTable tr');
-            
-            for (var i = 1; i < rows.length; i++) {
-                var row = rows[i];
-                var text = row.textContent.toLowerCase();
-                
-                if (text.includes(search) || search === '') {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            }
-        }
-        
-        function filterPackages() {
-            var categoryFilter = document.getElementById('packageFilterCategory').value;
-            var statusFilter = document.getElementById('packageFilterStatus').value;
-            var rows = document.querySelectorAll('#packagesTable tr');
-            
-            for (var i = 1; i < rows.length; i++) {
-                var row = rows[i];
-                var category = row.cells[2].textContent.trim();
-                var status = row.cells[5].textContent.trim();
-                
-                var categoryMatch = categoryFilter === 'all' || category === categoryFilter;
-                var statusMatch = statusFilter === 'all' || status === statusFilter;
-                
-                if (categoryMatch && statusMatch) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            }
-        }
-        
-        function editPackage(packageId) {
-            var packages = JSON.parse(localStorage.getItem('packages') || '[]');
-            var pkg = packages.find(p => p.id === packageId);
-            
-            if (pkg) {
-                // Set form title
-                document.getElementById('packageFormTitle').textContent = 'Edit Package';
-                document.getElementById('editingPackageId').value = packageId;
-                
-                // Fill form with package data
-                document.getElementById('packageName').value = pkg.name;
-                document.getElementById('packagePrice').value = pkg.price;
-                document.getElementById('packageDuration').value = pkg.duration;
-                document.getElementById('packageCategory').value = pkg.category;
-                document.getElementById('packageDifficulty').value = pkg.difficulty;
-                document.getElementById('packageSeason').value = pkg.season;
-                document.getElementById('packageDescription').value = pkg.description;
-                document.getElementById('packageInclusions').value = pkg.inclusions;
-                document.getElementById('packageExclusions').value = pkg.exclusions;
-                document.getElementById('packageMinPeople').value = pkg.minPeople;
-                document.getElementById('packageMaxPeople').value = pkg.maxPeople;
-                document.getElementById('packageTransport').value = pkg.transport;
-                document.getElementById('packageAccommodation').value = pkg.accommodation;
-                
-                // Show form
-                document.getElementById('addPackageForm').className = '';
-            }
-        }
-        
+
+        // Toggle package status
         function togglePackageStatus(packageId) {
-            var packages = JSON.parse(localStorage.getItem('packages') || '[]');
-            var pkgIndex = packages.findIndex(p => p.id === packageId);
-            
-            if (pkgIndex !== -1) {
-                var pkg = packages[pkgIndex];
-                packages[pkgIndex].status = pkg.status === 'Active' ? 'Inactive' : 'Active';
+            const pkg = packages.find(p => p.id === packageId);
+            if (pkg) {
+                pkg.status = pkg.status === 'Active' ? 'Inactive' : 'Active';
                 localStorage.setItem('packages', JSON.stringify(packages));
                 loadPackages();
-                alert('Package "' + pkg.name + '" ' + (pkg.status === 'Active' ? 'activated' : 'deactivated') + '!');
+                updateDashboardStats();
+                alert(`Package "${pkg.name}" ${pkg.status === 'Active' ? 'activated' : 'deactivated'}!`);
             }
         }
-        
+
+        // Search packages
+        function searchPackages() {
+            const search = document.getElementById('packageSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#packagesTableBody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(search) || search === '' ? '' : 'none';
+            });
+        }
+
+        // Filter packages
+        function filterPackages() {
+            const categoryFilter = document.getElementById('packageFilterCategory').value;
+            const statusFilter = document.getElementById('packageFilterStatus').value;
+            const rows = document.querySelectorAll('#packagesTableBody tr');
+            
+            rows.forEach(row => {
+                const category = row.cells[2].textContent.trim();
+                const status = row.cells[5].textContent.trim();
+                
+                const categoryMatch = categoryFilter === 'all' || category === categoryFilter;
+                const statusMatch = statusFilter === 'all' || status === statusFilter;
+                
+                row.style.display = categoryMatch && statusMatch ? '' : 'none';
+            });
+        }
+
+        // Load bookings
+        function loadBookings() {
+            const tbody = document.getElementById('bookingsTableBody');
+            tbody.innerHTML = '';
+            
+            bookings.forEach(booking => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${booking.id}</td>
+                    <td>${booking.customer}</td>
+                    <td>${booking.package}</td>
+                    <td>${booking.date}</td>
+                    <td>₹${booking.amount.toLocaleString('en-IN')}</td>
+                    <td><span class="status-badge status-${booking.status.toLowerCase()}">${booking.status}</span></td>
+                    <td>
+                        <button class="btn btn-sm">View</button>
+                    </td>
+                `;
+            });
+        }
+
+        // Load users
+        function loadUsers() {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+            
+            users.forEach(user => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>${user.phone}</td>
+                    <td>${user.registered}</td>
+                    <td><span class="status-badge status-${user.status.toLowerCase()}">${user.status}</span></td>
+                    <td>
+                        <button class="btn btn-sm">View</button>
+                    </td>
+                `;
+            });
+        }
+
+        // Refresh data
+        function refreshData() {
+            packages = JSON.parse(localStorage.getItem('packages') || '[]');
+            bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+            users = JSON.parse(localStorage.getItem('users') || '[]');
+            updateDashboardStats();
+            
+            const currentSection = document.querySelector('.content-section:not([style*="display: none"])');
+            if (currentSection) {
+                if (currentSection.id === 'packages') loadPackages();
+                else if (currentSection.id === 'bookings') loadBookings();
+                else if (currentSection.id === 'users') loadUsers();
+            }
+        }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            window.location.href = 'login.html';
+        }
+
+        // Check authentication
         if (localStorage.getItem('isLoggedIn') !== 'true') {
             window.location.href = 'login.html';
         }
+
+        // Initialize dashboard on load
+        updateDashboardStats();
     </script>
 </body>
 </html>
